@@ -110,12 +110,19 @@
             left: 0;
             font-size: 1.2em;
         }
-
+        
+        /* 모바일 화면에 맞춰 2열로 변경 */
         .mission-grid, .manual-grid {
             display: grid;
             gap: 15px;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             margin-top: 20px;
+        }
+
+        @media (min-width: 500px) {
+            .mission-grid, .manual-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .mission-card, .manual-card {
