@@ -29,10 +29,22 @@
         .popup-close { position: absolute; top: 10px; right: 15px; font-size: 1.5em; color: #aaa; cursor: pointer; }
         .popup-close:hover { color: #333; }
         .popup-title { font-size: 1.3em; margin-bottom: 15px; color: #d9534f; }
-        .popup-content ul { list-style: none; padding: 0; margin: 0; }
-        .popup-content li { margin-bottom: 8px; padding-left: 0; position: relative; font-size: 0.95em; display: flex; align-items: flex-start; }
-        .popup-content li input[type="checkbox"] { margin-right: 10px; flex-shrink: 0; margin-top: 3px; }
-        .popup-content li.checked label { text-decoration: line-through; color: #777; }
+        .popup-content p { margin: 0; font-size: 0.95em; }
+        .popup-content strong { color: #d9534f; }
+
+        /* 체크리스트 스타일 */
+        .popup-list ul { list-style: none; padding: 0; margin: 0; }
+        .popup-list li { margin-bottom: 8px; padding-left: 0; position: relative; font-size: 0.95em; display: flex; align-items: flex-start; }
+        .popup-list li input[type="checkbox"] { margin-right: 10px; flex-shrink: 0; margin-top: 3px; }
+        .popup-list li.checked label { text-decoration: line-through; color: #777; }
+        
+        /* 2열 레이아웃 스타일 */
+        .popup-list.two-columns {
+            columns: 2;
+            -webkit-columns: 2;
+            -moz-columns: 2;
+            column-gap: 20px;
+        }
     </style>
 </head>
 <body>
@@ -115,9 +127,18 @@
                 'GPU 준비실', '품질분석실'
             ],
             '1층-3구역': [
-                '주안 GSS 스막', '주안 GSS', '협력사 벤더1', '협력사 벤더2',
-                '협력사 벤더3', '협력사 벤더4', '협력사 벤더5', '협력사 벤더6',
-                '협력사 벤더7', '협력사 벤더8', '협력사 벤더9', '협력사 벤더10'
+                { text: '주안 GSS 스막' },
+                { text: '주안 GSS' },
+                { text: '1층 협력사 벤더1' },
+                { text: '1층 협력사 벤더2' },
+                { text: '1층 협력사 벤더3' },
+                { text: '1층 협력사 벤더4' },
+                { text: '1층 협력사 벤더5' },
+                { text: '2층 협력사 벤더6' },
+                { text: '2층 협력사 벤더7' },
+                { text: '2층 협력사 벤더8' },
+                { text: '2층 협력사 벤더9' },
+                { text: '2층 협력사 벤더10' }
             ],
             '1층-4구역': [
                 'GSS 스막', 'GSS', 'GSS PA', 'IGS', 'GSS 최종검사',
@@ -127,11 +148,11 @@
                 '피트니스', '탈의실', '화장실, 세탁실', '직원휴게실'
             ],
             '3층-1구역': [
-                '경영지원실/ 부사장실', '대회의실', '행복A, B', '화장실', '탕비실',
-                '중회의실', '자유 A~D', '직속,영업 WS/ 대표이사실'
+                '경영지원실/ 부사장실', '대회의실', '행복A 회의실', '행복B 회의실', '화장실', '탕비실',
+                '중회의실', '자유A 회의실', '자유B 회의실', '자유C 회의실', '자유D 회의실', '직속,영업 WS/ 대표이사실'
             ],
             '3층-2구역': [
-                '연구소 WS', '생산기술WS', '고객지원창고', '소통A, B',
+                '연구소 WS', '생산기술WS', '고객지원창고', '소통A 회의실', '소통B 회의실',
                 '제조,CS WS', '전산실, 서버실', '제품TEST실/ 제어 TEST실', '공조실',
                 '자재창고'
             ],
@@ -143,10 +164,7 @@
                 '지하 크린룸', '창고', '미화 협력사 휴게실', '일반창고',
                 '컨트롤룸', '기계실', '전기실', '발전기실'
             ],
-            '지원조 임무': [
-                'GATE1 앞, GATE2 앞 옥외 등 인원 밀집 예상 지역에서 안전통제 및 집결지 안내',
-                '각 구역별 인원 부재 시 예비 배치 인력 운영'
-            ]
+            '지원조 임무': '<strong>현장 안전통제 및 집결지 안내:</strong> GATE1, GATE2 앞 옥외 등 인원 밀집 예상 지역에서 안전을 확보하고 피난 유도.<br><br><strong>예비 인력 운영:</strong> 각 구역에 인원이 부재할 경우 즉시 투입하여 임무를 대행.'
         };
 
         function openTab(evt, tabName) {
@@ -171,16 +189,28 @@
             popupDetailList.innerHTML = '';
 
             const data = areaData[area];
-            if (data) {
+            if (typeof data === 'string') {
+                popupDetailList.innerHTML = `<p>${data}</p>`;
+            } else if (Array.isArray(data)) {
                 const ul = document.createElement('ul');
+                const listWrapper = document.createElement('div');
+                listWrapper.classList.add('popup-list');
+
+                if (data.length > 5) {
+                    listWrapper.classList.add('two-columns');
+                } else {
+                    listWrapper.classList.remove('two-columns');
+                }
+
                 data.forEach((item, index) => {
                     const li = document.createElement('li');
                     const checkboxId = `${area}-${index}`;
                     const isChecked = localStorage.getItem(checkboxId) === 'true';
+                    const itemText = typeof item === 'object' ? item.text : item;
 
                     li.innerHTML = `
                         <input type="checkbox" id="${checkboxId}" ${isChecked ? 'checked' : ''}>
-                        <label for="${checkboxId}">${item}</label>
+                        <label for="${checkboxId}">${itemText}</label>
                     `;
                     if (isChecked) {
                         li.classList.add('checked');
@@ -198,7 +228,8 @@
 
                     ul.appendChild(li);
                 });
-                popupDetailList.appendChild(ul);
+                listWrapper.appendChild(ul);
+                popupDetailList.appendChild(listWrapper);
             }
 
             popup.style.display = 'flex';
