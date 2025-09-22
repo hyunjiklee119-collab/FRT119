@@ -33,6 +33,10 @@
         .accordion-content li:before { content: "•"; color: #d9534f; position: absolute; left: 0; }
         .accordion-header span { transition: transform 0.3s; }
         .accordion-header.active span { transform: rotate(45deg); }
+        /* 구역 선택 버튼 스타일 */
+        .area-select-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+        .area-select-btn { padding: 15px; background-color: #337ab7; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.2s; }
+        .area-select-btn:hover { background-color: #286090; }
     </style>
 </head>
 <body>
@@ -60,6 +64,11 @@
                 <h3>지휘통제팀</h3>
                 <p class="mission-summary">상황 총괄 및 조직원 지휘·관리</p>
             </div>
+            <div class="mission-card" onclick="openPopup('피난유도팀')">
+                <span class="card-icon">🏃</span>
+                <h3>피난유도팀</h3>
+                <p class="mission-summary">인원 대피 유도 및 안전 구역 확보</p>
+            </div>
         </div>
     </div>
     
@@ -75,6 +84,7 @@
         const missionData = {
             '초기소화반': {
                 title: '초기소화반 세부 임무',
+                type: 'accordion',
                 content: [
                     { title: '1. 출동 준비', description: '<ul><li>장비 위치 확인 (방화복, 공기호흡기 등)</li><li>비상연락망 및 연락 수단 확인</li></ul>' },
                     { title: '2. 현장 도착', description: '<ul><li>화재 정보 확인 (종류, 규모 등)</li><li>화재 상황 전파 및 보고 / 긴급 신고</li></ul>' },
@@ -84,6 +94,7 @@
             },
             '응급구조반': {
                 title: '응급구조반 세부 임무',
+                type: 'accordion',
                 content: [
                     { title: '1. 출동 준비', description: '<ul><li>개인 보호구 준비</li><li>응급구조장비 (들것, 구급키트 등) 점검</li></ul>' },
                     { title: '2. 현장 도착', description: '<ul><li>화재 현장 내 인명 피해 가능성 파악</li><li>구조 대상자 탐색 및 위치 확인</li></ul>' },
@@ -93,6 +104,7 @@
             },
             '방호안전반': {
                 title: '방호안전반 세부 임무',
+                type: 'accordion',
                 content: [
                     { title: '1. 출동 준비', description: '<ul><li>무전기, 확성기 등 현장 통제 장비 준비</li><li>경계선, 안전 띠 등 현장 구획 장비 준비</li></ul>' },
                     { title: '2. 현장 도착', description: '<ul><li>화재 현장 주변 통제선 설정 및 경비</li><li>소화반, 구조반이 안전하게 활동할 수 있도록 지원</li></ul>' },
@@ -102,23 +114,86 @@
             },
             '지휘통제팀': {
                 title: '지휘통제팀 세부 임무',
+                type: 'accordion',
                 content: [
                     { title: '1. 현장 지휘소 설치', description: '<ul><li>화재 현장 안전이 확보된 지역에 지휘본부 설치</li><li>무전기, 통제 장비 등 지휘장비 준비</li></ul>' },
                     { title: '2. 상황 파악', description: '<ul><li>화재 발생 상황, 규모, 인명 피해 등 종합적 정보 수집</li><li>각 반의 활동 현황 실시간 모니터링 및 지시</li></ul>' },
                     { title: '3. 지휘 및 통제', description: '<ul><li>각 반의 임무 배정 및 효율적인 작전 지시</li><li>외부 유관기관 (소방서, 경찰)과 협조 및 정보 공유</li></ul>' },
                     { title: '4. 후속 조치', description: '<ul><li>화재 진압 완료 후 종합 상황 보고서 작성</li><li>화재 원인 및 피해 규모 조사에 협조</li></ul>' }
                 ]
+            },
+            '피난유도팀': {
+                title: '피난유도팀 구역 선택',
+                type: 'area-select',
+                content: {
+                    '1층 피난구역': [
+                        { title: '임무 1', description: '<ul><li>담당 구역: 1동 1층 사무실 및 로비</li><li>대피 경로: 정문 → 중앙 출입문 → 주차장 집결지</li></ul>' },
+                        { title: '임무 2', description: '<ul><li>특이사항: 복합기실 내 화재 발생 시 화재진압반에 보고</li><li>확인 대상: 장애인 화장실 내 인원 확인</li></ul>' }
+                    ],
+                    '2~4층 피난구역': [
+                        { title: '임무 1', description: '<ul><li>담당 구역: 1동 2층, 3층, 4층</li><li>대피 경로: 비상계단 A → 1층 → 주차장 집결지</li></ul>' },
+                        { title: '임무 2', description: '<ul><li>특이사항: 회의실 사용 인원 수시 확인</li><li>확인 대상: 탕비실 내 인원 확인</li></ul>' }
+                    ],
+                    '지하 및 지원구역': [
+                        { title: '임무 1', description: '<ul><li>담당 구역: 지하층 및 공용 공간</li><li>대피 경로: 후문 → 옥외 비상계단 → 주차장 집결지</li></ul>' },
+                        { title: '임무 2', description: '<ul><li>특이사항: 방재실 내 관계자 유무 확인</li><li>확인 대상: 외부인 방문 인원 확인</li></ul>' }
+                    ]
+                }
             }
         };
 
         function openPopup(category) {
             const popup = document.getElementById('mission-popup');
-            const popupContentBody = document.getElementById('popup-content-body');
             const popupTitle = document.getElementById('popup-title');
+            const popupContentBody = document.getElementById('popup-content-body');
             const data = missionData[category];
+
             popupTitle.textContent = data.title;
             popupContentBody.innerHTML = '';
-            data.content.forEach(item => {
+
+            if (data.type === 'area-select') {
+                const areaGrid = document.createElement('div');
+                areaGrid.classList.add('area-select-grid');
+                for (const area in data.content) {
+                    const button = document.createElement('button');
+                    button.classList.add('area-select-btn');
+                    button.textContent = area;
+                    button.onclick = () => showAreaDetails(area);
+                    areaGrid.appendChild(button);
+                }
+                popupContentBody.appendChild(areaGrid);
+            } else {
+                data.content.forEach(item => {
+                    const accordionItem = document.createElement('div');
+                    accordionItem.classList.add('accordion-item');
+                    const accordionHeader = document.createElement('div');
+                    accordionHeader.classList.add('accordion-header');
+                    accordionHeader.innerHTML = `${item.title} <span>+</span>`;
+                    const accordionContent = document.createElement('div');
+                    accordionContent.classList.add('accordion-content');
+                    accordionContent.innerHTML = item.description;
+                    accordionItem.appendChild(accordionHeader);
+                    accordionItem.appendChild(accordionContent);
+                    popupContentBody.appendChild(accordionItem);
+                    accordionHeader.addEventListener('click', () => {
+                        const isActive = accordionContent.classList.toggle('active');
+                        const icon = accordionHeader.querySelector('span');
+                        icon.textContent = isActive ? '-' : '+';
+                    });
+                });
+            }
+            popup.style.display = 'flex';
+        }
+
+        function showAreaDetails(area) {
+            const popupTitle = document.getElementById('popup-title');
+            const popupContentBody = document.getElementById('popup-content-body');
+            const areaData = missionData['피난유도팀'].content[area];
+
+            popupTitle.textContent = `피난유도팀 - ${area}`;
+            popupContentBody.innerHTML = '';
+            
+            areaData.forEach(item => {
                 const accordionItem = document.createElement('div');
                 accordionItem.classList.add('accordion-item');
                 const accordionHeader = document.createElement('div');
@@ -136,7 +211,6 @@
                     icon.textContent = isActive ? '-' : '+';
                 });
             });
-            popup.style.display = 'flex';
         }
 
         function closePopup() {
