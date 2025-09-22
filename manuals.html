@@ -48,8 +48,116 @@
                 <span class="card-icon">❤️</span>
                 <h3>심폐소생술(CPR)</h3>
             </div>
+            <div class="manual-card" onclick="openPopup('피난구조대')">
+                <span class="card-icon">⛑️</span>
+                <h3>피난구조대</h3>
+            </div>
+            <div class="manual-card" onclick="openPopup('완강기')">
+                <span class="card-icon">🤸</span>
+                <h3>완강기</h3>
+            </div>
         </div>
     </div>
     
     <div id="manual-popup" class="popup">
         <div class="popup-content">
+            <span class="popup-close" onclick="closePopup()">&times;</span>
+            <h3 id="popup-title"></h3>
+            <div id="popup-content-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const manualData = {
+            '소화기': {
+                title: '소화기 사용법',
+                content: `
+                    <img src="whds_ert/EXTINGMANUAL.jpg" alt="소화기 사용법" class="manual-image">
+                    <div class="manual-notes">
+                        <p><strong>🚨 주의사항:</strong></p>
+                        <p>✔️ 소화기는 바람을 등지고 사용해야 연기 흡입을 막고 효과적으로 진화할 수 있습니다.</p>
+                        <p>✔️ 불이 완전히 꺼질 때까지 소화기를 사용해야 합니다.</p>
+                        <p>✔️ 전기가 흐르는 곳에 물을 뿌려서는 안 됩니다. (C급 화재)</p>
+                    </div>
+                `
+            },
+            '소화전': {
+                title: '소화전 사용법',
+                content: `
+                    <img src="whds_ert/HYDMANU.jpg" alt="소화전 사용법" class="manual-image">
+                    <div class="manual-notes">
+                        <p><strong>🚨 주의사항:</strong></p>
+                        <p>✔️ 소화전은 2인 1조로 사용해야 효과적입니다.</p>
+                        <p>✔️ 옥내 소화전은 초기 화재 진압용이므로 불이 커지면 사용하지 말고 즉시 대피하세요.</p>
+                    </div>
+                `
+            },
+            '공기호흡기': {
+                title: '공기호흡기 사용법',
+                content: `
+                    <img src="whds_ert/AIRMANUAL.jpg" alt="공기호흡기 사용법" class="manual-image">
+                    <div class="manual-notes">
+                        <p><strong>🚨 주의사항:</strong></p>
+                        <p>✔️ 공기압이 부족하면 위험하므로 항상 사용 전 공기량을 확인해야 합니다.</p>
+                        <p>✔️ 용기 밸브는 반드시 끝까지 완전히 열어야 공기가 원활하게 공급됩니다.</p>
+                    </div>
+                `
+            },
+            '심폐소생술(CPR)': {
+                title: '심폐소생술(CPR)',
+                content: `
+                    <img src="whds_ert/CPRMANUAL.jpg" alt="심폐소생술(CPR) 단계" class="manual-image">
+                    <div class="manual-notes">
+                        <p><strong>🚨 주의사항:</strong></p>
+                        <p>✔️ 정확하고 강하게 가슴을 압박하는 것이 중요합니다. 분당 100-120회 속도로, 약 5cm 깊이로 압박하세요.</p>
+                        <p>✔️ 인공호흡은 선택사항이지만, 가슴 압박은 끊기지 않도록 해야 합니다.</p>
+                    </div>
+                `
+            },
+            '피난구조대': {
+                title: '피난구조대 사용법',
+                content: `
+                    <img src="whds_ert/RESCUEMANUAL.jpg" alt="피난구조대 사용법" class="manual-image">
+                    <div class="manual-notes">
+                        <p><strong>🚨 주의사항:</strong></p>
+                        <p>✔️ 피난구조대는 건물 내 인원을 안전하게 지상으로 내리는 장비입니다.</p>
+                        <p>✔️ 반드시 사전에 사용법을 숙지하고, 설치 및 하강 시 안전을 최우선으로 해야 합니다.</p>
+                    </div>
+                `
+            },
+            '완강기': {
+                title: '완강기 사용법',
+                content: `
+                    <img src="whds_ert/WANGANGMANUAL.jpg" alt="완강기 사용법" class="manual-image">
+                    <div class="manual-notes">
+                        <p><strong>🚨 주의사항:</strong></p>
+                        <p>✔️ 완강기는 건물 외부에 설치된 비상 탈출 장비입니다.</p>
+                        <p>✔️ 사용 전 로프가 꼬여 있지 않은지, 고정 장치가 안전한지 확인해야 합니다.</p>
+                    </div>
+                `
+            }
+        };
+
+        function openPopup(manual) {
+            const popup = document.getElementById('manual-popup');
+            const popupTitle = document.getElementById('popup-title');
+            const popupContentBody = document.getElementById('popup-content-body');
+            const data = manualData[manual];
+            popupTitle.textContent = data.title;
+            popupContentBody.innerHTML = data.content;
+            popup.style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('manual-popup').style.display = 'none';
+        }
+
+        window.addEventListener('click', function(event) {
+            const popup = document.getElementById('manual-popup');
+            if (event.target === popup) {
+                closePopup();
+            }
+        });
+    </script>
+</body>
+</html>
