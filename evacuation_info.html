@@ -23,17 +23,16 @@
         .area-card h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.2em; color: #333; }
         .area-summary { font-size: 0.9em; color: #777; }
         
-        /* 아코디언 스타일 */
-        .accordion-item { border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
-        .accordion-header { background-color: #f7f7f7; padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-        .accordion-header:hover { background-color: #eee; }
-        .accordion-content { padding: 0 15px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background-color: #fff; }
-        .accordion-content.active { max-height: 500px; padding: 15px; }
-        .accordion-content ul { list-style: none; padding: 0; margin: 0; }
-        .accordion-content li { margin-bottom: 8px; padding-left: 15px; position: relative; }
-        .accordion-content li:before { content: "•"; color: #d9534f; position: absolute; left: 0; }
-        .accordion-header span { transition: transform 0.3s; }
-        .accordion-header.active span { transform: rotate(45deg); }
+        /* 팝업 스타일 */
+        .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 1000; }
+        .popup-content { background-color: #fff; padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; position: relative; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); max-height: 80vh; overflow-y: auto; }
+        .popup-close { position: absolute; top: 10px; right: 15px; font-size: 1.5em; color: #aaa; cursor: pointer; }
+        .popup-close:hover { color: #333; }
+        .popup-title { font-size: 1.3em; margin-bottom: 15px; color: #d9534f; }
+        .popup-content ul { list-style: none; padding: 0; margin: 0; }
+        .popup-content li { margin-bottom: 8px; padding-left: 0; position: relative; font-size: 0.95em; display: flex; align-items: flex-start; }
+        .popup-content li input[type="checkbox"] { margin-right: 10px; flex-shrink: 0; margin-top: 3px; }
+        .popup-content li.checked label { text-decoration: line-through; color: #777; }
     </style>
 </head>
 <body>
@@ -44,205 +43,112 @@
         <div class="tab-container">
             <button class="tab-btn active" onclick="openTab(event, 'floor1')">1층</button>
             <button class="tab-btn" onclick="openTab(event, 'floor2-4')">2~4층</button>
-            <button class="tab-btn" onclick="openTab(event, 'basement')">지하층</button>
-            <button class="tab-btn" onclick="openTab(event, 'support')">지원</button>
+            <button class="tab-btn" onclick="openTab(event, 'basement-support')">지하 및 지원</button>
         </div>
         
         <div id="floor1" class="tab-content active">
-            <div class="area-card" onclick="toggleAccordion('area1-1')">
+            <div class="area-card" onclick="openPopup('1층-1구역')">
                 <h3>1층-1구역</h3>
-                <p class="area-summary">로비/접견실, 화장실/소회의실, 교육장, 대회의실, 보건실 등</p>
+                <p class="area-summary">로비/접견실, 화장실/소회의실, 교육장, 중회의실2,3, 대회의실, 보건실 등</p>
             </div>
-            <div id="area1-1" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>로비/접견실</li>
-                        <li>화장실/소회의실</li>
-                        <li>교육장</li>
-                        <li>중회의실2,3/화장실</li>
-                        <li>대회의실</li>
-                        <li>보건실</li>
-                        <li>TC룸/TC룸 스막</li>
-                        <li>GSS 측 화장실</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="area-card" onclick="toggleAccordion('area1-2')">
+            <div class="area-card" onclick="openPopup('1층-2구역')">
                 <h3>1층-2구역</h3>
                 <p class="area-summary">자재창고, GPU, GPU 용접실, 품질분석실 등</p>
             </div>
-            <div id="area1-2" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>자재창고</li>
-                        <li>GPU 스막</li>
-                        <li>GPU</li>
-                        <li>GPU 최종검사</li>
-                        <li>GPU 용접실</li>
-                        <li>GPU 준비실</li>
-                        <li>품질분석실</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="area-card" onclick="toggleAccordion('area1-3')">
+            <div class="area-card" onclick="openPopup('1층-3구역')">
                 <h3>1층-3구역</h3>
                 <p class="area-summary">주안 GSS, 협력사 벤더 등</p>
             </div>
-            <div id="area1-3" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>주안 GSS 스막</li>
-                        <li>주안 GSS</li>
-                        <li>협력사벤더1~5</li>
-                        <li>2F 협력사벤더6~10</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="area-card" onclick="toggleAccordion('area1-4')">
+            <div class="area-card" onclick="openPopup('1층-4구역')">
                 <h3>1층-4구역</h3>
                 <p class="area-summary">GSS, IGS, 소모품창고, 반출입구 등</p>
-            </div>
-            <div id="area1-4" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>GSS 스막</li>
-                        <li>GSS</li>
-                        <li>GSS PA</li>
-                        <li>IGS</li>
-                        <li>GSS 최종검사</li>
-                        <li>소모품창고</li>
-                        <li>반출입구</li>
-                    </ul>
-                </div>
             </div>
         </div>
         
         <div id="floor2-4" class="tab-content">
-            <div class="area-card" onclick="toggleAccordion('area2')">
+            <div class="area-card" onclick="openPopup('2층 구역')">
                 <h3>2층 구역</h3>
                 <p class="area-summary">피트니스, 탈의실, 직원휴게실 등</p>
             </div>
-            <div id="area2" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>피트니스</li>
-                        <li>탈의실</li>
-                        <li>화장실, 세탁실</li>
-                        <li>직원휴게실</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="area-card" onclick="toggleAccordion('area3-1')">
+            <div class="area-card" onclick="openPopup('3층-1구역')">
                 <h3>3층-1구역</h3>
                 <p class="area-summary">경영지원실, 부사장실, 대회의실, 행복A,B 등</p>
             </div>
-            <div id="area3-1" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>경영지원실/ 부사장실</li>
-                        <li>대회의실</li>
-                        <li>행복A, B</li>
-                        <li>화장실</li>
-                        <li>탕비실</li>
-                        <li>중회의실</li>
-                        <li>자유 A~D</li>
-                        <li>직속,영업 WS/ 대표이사실</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="area-card" onclick="toggleAccordion('area3-2')">
+            <div class="area-card" onclick="openPopup('3층-2구역')">
                 <h3>3층-2구역</h3>
                 <p class="area-summary">연구소WS, 생산기술WS, 고객지원창고, 전산실 등</p>
             </div>
-            <div id="area3-2" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>연구소 WS</li>
-                        <li>생산기술WS</li>
-                        <li>고객지원창고</li>
-                        <li>소통A, B</li>
-                        <li>제조,CS WS</li>
-                        <li>전산실, 서버실</li>
-                        <li>제품TEST실/ 제어 TEST실</li>
-                        <li>공조실</li>
-                        <li>자재창고</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="area-card" onclick="toggleAccordion('area4')">
+            <div class="area-card" onclick="openPopup('4층 구역')">
                 <h3>4층 구역</h3>
                 <p class="area-summary">카페, 식당 및 주방, 다목적실, 방재실 등</p>
             </div>
-            <div id="area4" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>카페</li>
-                        <li>식당 및 주방</li>
-                        <li>주방 휴게실</li>
-                        <li>다목적실</li>
-                        <li>직원휴게실</li>
-                        <li>방재실</li>
-                        <li>문서고</li>
-                    </ul>
-                </div>
-            </div>
         </div>
 
-        <div id="basement" class="tab-content">
-            <div class="area-card" onclick="toggleAccordion('areab1')">
+        <div id="basement-support" class="tab-content">
+            <div class="area-card" onclick="openPopup('지하층 구역')">
                 <h3>지하층 구역</h3>
                 <p class="area-summary">지하 크린룸, 창고, 기계실, 전기실, 발전기실 등</p>
             </div>
-            <div id="areab1" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>지하 크린룸</li>
-                        <li>창고</li>
-                        <li>미화 협력사 휴게실</li>
-                        <li>일반창고</li>
-                        <li>컨트롤룸</li>
-                        <li>기계실</li>
-                        <li>전기실</li>
-                        <li>발전기실</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div id="support" class="tab-content">
-            <div class="area-card" onclick="toggleAccordion('areasupport')">
+            <div class="area-card" onclick="openPopup('지원조 임무')">
                 <h3>지원조 임무</h3>
                 <p class="area-summary">게이트 앞, 옥외 등 인원 통제 및 집결지 안내</p>
             </div>
-            <div id="areasupport" class="accordion-item">
-                <div class="accordion-header">확인해야 할 실 <span>+</span></div>
-                <div class="accordion-content">
-                    <ul>
-                        <li>GATE1 앞, GATE2 앞 옥외 등 인원 밀집 예상 지역에서 안전통제 및 집결지 안내</li>
-                        <li>각 구역별 인원 부재 시 예비 배치 인력 운영</li>
-                    </ul>
-                </div>
-            </div>
         </div>
-
+    </div>
+    
+    <div id="info-popup" class="popup">
+        <div class="popup-content">
+            <span class="popup-close" onclick="closePopup()">&times;</span>
+            <h3 class="popup-title"></h3>
+            <div id="popup-detail-list"></div>
+        </div>
     </div>
 
     <script>
+        const areaData = {
+            '1층-1구역': [
+                '로비/접견실', '화장실/소회의실', '교육장', '중회의실2', '중회의실3',
+                '대회의실', '보건실', 'TC룸/TC룸 스막', 'GSS 측 화장실'
+            ],
+            '1층-2구역': [
+                '자재창고', 'GPU 스막', 'GPU', 'GPU 최종검사', 'GPU 용접실',
+                'GPU 준비실', '품질분석실'
+            ],
+            '1층-3구역': [
+                '주안 GSS 스막', '주안 GSS', '협력사 벤더1', '협력사 벤더2',
+                '협력사 벤더3', '협력사 벤더4', '협력사 벤더5', '협력사 벤더6',
+                '협력사 벤더7', '협력사 벤더8', '협력사 벤더9', '협력사 벤더10'
+            ],
+            '1층-4구역': [
+                'GSS 스막', 'GSS', 'GSS PA', 'IGS', 'GSS 최종검사',
+                '소모품창고', '반출입구'
+            ],
+            '2층 구역': [
+                '피트니스', '탈의실', '화장실, 세탁실', '직원휴게실'
+            ],
+            '3층-1구역': [
+                '경영지원실/ 부사장실', '대회의실', '행복A, B', '화장실', '탕비실',
+                '중회의실', '자유 A~D', '직속,영업 WS/ 대표이사실'
+            ],
+            '3층-2구역': [
+                '연구소 WS', '생산기술WS', '고객지원창고', '소통A, B',
+                '제조,CS WS', '전산실, 서버실', '제품TEST실/ 제어 TEST실', '공조실',
+                '자재창고'
+            ],
+            '4층 구역': [
+                '카페', '식당 및 주방', '주방 휴게실', '다목적실',
+                '직원휴게실', '방재실', '문서고'
+            ],
+            '지하층 구역': [
+                '지하 크린룸', '창고', '미화 협력사 휴게실', '일반창고',
+                '컨트롤룸', '기계실', '전기실', '발전기실'
+            ],
+            '지원조 임무': [
+                'GATE1 앞, GATE2 앞 옥외 등 인원 밀집 예상 지역에서 안전통제 및 집결지 안내',
+                '각 구역별 인원 부재 시 예비 배치 인력 운영'
+            ]
+        };
+
         function openTab(evt, tabName) {
             const tabcontent = document.getElementsByClassName("tab-content");
             for (let i = 0; i < tabcontent.length; i++) {
@@ -255,24 +161,60 @@
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
-        
-        function toggleAccordion(id) {
-            const content = document.getElementById(id).querySelector('.accordion-content');
-            const header = document.getElementById(id).querySelector('.accordion-header');
-            const icon = header.querySelector('span');
-            
-            const isActive = content.classList.contains('active');
-            
-            if (isActive) {
-                content.classList.remove('active');
-                icon.textContent = '+';
-            } else {
-                content.classList.add('active');
-                icon.textContent = '-';
+
+        function openPopup(area) {
+            const popup = document.getElementById('info-popup');
+            const popupTitle = popup.querySelector('.popup-title');
+            const popupDetailList = document.getElementById('popup-detail-list');
+
+            popupTitle.textContent = area;
+            popupDetailList.innerHTML = '';
+
+            const data = areaData[area];
+            if (data) {
+                const ul = document.createElement('ul');
+                data.forEach((item, index) => {
+                    const li = document.createElement('li');
+                    const checkboxId = `${area}-${index}`;
+                    const isChecked = localStorage.getItem(checkboxId) === 'true';
+
+                    li.innerHTML = `
+                        <input type="checkbox" id="${checkboxId}" ${isChecked ? 'checked' : ''}>
+                        <label for="${checkboxId}">${item}</label>
+                    `;
+                    if (isChecked) {
+                        li.classList.add('checked');
+                    }
+
+                    li.querySelector('input').addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            li.classList.add('checked');
+                            localStorage.setItem(checkboxId, 'true');
+                        } else {
+                            li.classList.remove('checked');
+                            localStorage.setItem(checkboxId, 'false');
+                        }
+                    });
+
+                    ul.appendChild(li);
+                });
+                popupDetailList.appendChild(ul);
             }
+
+            popup.style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('info-popup').style.display = 'none';
         }
         
-        // 페이지 로드 시 첫 번째 탭 활성화
+        window.addEventListener('click', function(event) {
+            const popup = document.getElementById('info-popup');
+            if (event.target === popup) {
+                closePopup();
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('floor1').style.display = 'block';
         });
