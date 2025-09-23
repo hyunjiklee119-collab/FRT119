@@ -59,11 +59,11 @@
                 <h3>지휘통제팀</h3>
                 <p class="mission-summary">상황 총괄 및 조직원 지휘·관리</p>
             </div>
-            <a href="evacuation_info.html" class="mission-card">
+            <div class="mission-card" onclick="openPopup('피난유도팀')">
                 <span class="card-icon">🏃</span>
                 <h3>피난유도팀</h3>
                 <p class="mission-summary">인원 대피 유도 및 안전 구역 확보</p>
-            </a>
+            </div>
         </div>
     </div>
     
@@ -111,6 +111,15 @@
                     { title: '2. 상황 파악', description: '<ul><li>화재 발생 상황, 규모, 인명 피해 등 종합적 정보 수집</li><li>각 반의 활동 현황 실시간 모니터링 및 지시</li></ul>' },
                     { title: '3. 지휘 및 통제', description: '<ul><li>각 반의 임무 배정 및 효율적인 작전 지시</li><li>외부 유관기관 (소방서, 경찰)과 협조 및 정보 공유</li></ul>' },
                     { title: '4. 후속 조치', description: '<ul><li>화재 진압 완료 후 종합 상황 보고서 작성</li><li>화재 원인 및 피해 규모 조사에 협조</li></ul>' }
+                ]
+            },
+            '피난유도팀': {
+                title: '피난유도팀 세부 임무',
+                content: [
+                    { title: '1. 출동 준비', description: '<ul><li>비상 연락망 및 비상용 경광봉, 손전등 준비</li><li>피난유도반별 구역 확인 및 대피로 숙지</li></ul>' },
+                    { title: '2. 현장 도착', description: '<ul><li>구역 내 인원 및 상황 파악</li><li>대피 방송 및 경보 안내</li></ul>' },
+                    { title: '3. 피난 유도', description: '<ul><li>비상구, 계단 등 안전한 대피로 확보 및 안내</li><li>피난 약자(장애인, 노약자 등) 우선 대피 지원</li></ul>' },
+                    { title: '4. 후속 조치', description: '<ul><li>지정된 집결지로 인원 유도 및 인원수 확인</li><li>지휘통제팀에 인원 대피 상황 보고</li></ul>' }
                 ]
             }
         };
