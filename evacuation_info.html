@@ -30,7 +30,7 @@
             padding: 25px;
             border-radius: 10px;
             width: 90%;
-            max-width: 400vw;
+            max-width: 400px; /* PC 환경에서는 고정된 최대 너비 */
             position: relative;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             max-height: 80vh;
@@ -73,10 +73,10 @@
             column-gap: 20px;
         }
 
-        /* 모바일 최적화 */
+        /* 모바일 최적화: 600px 이하 화면에만 적용 */
         @media (max-width: 600px) {
             .popup-content {
-                max-width: 95vw;
+                max-width: 95vw; /* 모바일에서 팝업창 너비를 화면의 95%로 넓게 설정 */
             }
         }
     </style>
@@ -205,14 +205,14 @@
         };
 
         const imageData = {
-            '1층-1구역': 'https://github.com/hyunjiklee119-collab/FRT119/raw/6237d6d512a4fc7a89969ab6035691ea217353da/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C%ED%8C%8C%EC%9D%BC_20250923_110545.jpg',
+            '1층-1구역': 'images/1f_1.png',
             '1층-2구역': 'images/1f_2.png',
             '1층-3구역': 'images/1f_3.png',
             '1층-4구역': 'images/1f_4.png',
-            '2층 구역': 'https://github.com/hyunjiklee119-collab/FRT119/raw/6237d6d512a4fc7a89969ab6035691ea217353da/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C%ED%8C%8C%EC%9D%BC_20250923_110545.jpg',
+            '2층 구역': 'images/2f.png',
             '3층-1구역': 'images/3f_1.png',
             '3층-2구역': 'images/3f_2.png',
-            '4층 구역': 'https://github.com/hyunjiklee119-collab/FRT119/raw/6237d6d512a4fc7a89969ab6035691ea217353da/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C%ED%8C%8C%EC%9D%BC_20250923_110545.jpg',
+            '4층 구역': 'images/4f.png',
             '지하층 구역': 'images/basement.png',
             // 지원조 임무는 이미지가 없으므로 제외
         };
