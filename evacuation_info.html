@@ -1,254 +1,144 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>피난유도팀 구역별 임무</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Noto Sans KR', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; line-height: 1.6; }
-        .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
-        h1 { color: #d9534f; font-size: 1.8em; text-align: center; margin-bottom: 20px; }
-        .back-btn { display: inline-block; margin-bottom: 20px; color: #337ab7; text-decoration: none; font-weight: bold; }
-        
-        .tab-container { display: flex; justify-content: space-around; background-color: #eee; border-radius: 8px; margin-bottom: 20px; overflow-x: auto; }
-        .tab-btn { flex-grow: 1; text-align: center; padding: 15px 10px; border: none; background-color: transparent; font-weight: bold; color: #555; cursor: pointer; transition: background-color 0.2s, color 0.2s; white-space: nowrap; }
-        .tab-btn.active { background-color: #337ab7; color: white; border-radius: 8px; }
-        
-        .tab-content { display: none; padding: 20px 0; }
-        .tab-content.active { display: block; }
-        
-        .area-card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin-bottom: 15px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-        .area-card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
-        .area-card h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.2em; color: #333; }
-        .area-summary { font-size: 0.9em; color: #777; }
-        
-        /* 팝업 스타일 */
-        .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 1000; }
-        .popup-content { background-color: #fff; padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; position: relative; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); max-height: 80vh; overflow-y: auto; }
-        .popup-close { position: absolute; top: 10px; right: 15px; font-size: 1.5em; color: #aaa; cursor: pointer; }
-        .popup-close:hover { color: #333; }
-        .popup-title { font-size: 1.3em; margin-bottom: 15px; color: #d9534f; }
-        .popup-content p { margin: 0; font-size: 0.95em; }
-        .popup-content strong { color: #d9534f; }
+<script>
+    const areaData = {
+        '1층-1구역': [
+            '로비/접견실', '화장실/소회의실', '교육장', '중회의실2', '중회의실3',
+            '대회의실', '보건실', 'TC룸/TC룸 스막', 'GSS 측 화장실'
+        ],
+        '1층-2구역': [
+            '자재창고', 'GPU 스막', 'GPU', 'GPU 최종검사', 'GPU 용접실',
+            'GPU 준비실', '품질분석실'
+        ],
+        '1층-3구역': [
+            { text: '주안 GSS 스막' },
+            { text: '주안 GSS' },
+            { text: '1층 협력사 벤더1' },
+            { text: '1층 협력사 벤더2' },
+            { text: '1층 협력사 벤더3' },
+            { text: '1층 협력사 벤더4' },
+            { text: '1층 협력사 벤더5' },
+            { text: '2층 협력사 벤더6' },
+            { text: '2층 협력사 벤더7' },
+            { text: '2층 협력사 벤더8' },
+            { text: '2층 협력사 벤더9' },
+            { text: '2층 협력사 벤더10' }
+        ],
+        '1층-4구역': [
+            'GSS 스막', 'GSS', 'GSS PA', 'IGS', 'GSS 최종검사',
+            '소모품창고', '반출입구'
+        ],
+        '2층 구역': [
+            '피트니스', '탈의실', '화장실, 세탁실', '직원휴게실'
+        ],
+        '3층-1구역': [
+            '경영지원실/ 부사장실', '대회의실', '행복A 회의실', '행복B 회의실', '화장실', '탕비실',
+            '중회의실', '자유A 회의실', '자유B 회의실', '자유C 회의실', '자유D 회의실', '직속,영업 WS/ 대표이사실'
+        ],
+        '3층-2구역': [
+            '연구소 WS', '생산기술WS', '고객지원창고', '소통A 회의실', '소통B 회의실',
+            '제조,CS WS', '전산실, 서버실', '제품TEST실/ 제어 TEST실', '공조실',
+            '자재창고'
+        ],
+        '4층 구역': [
+            '카페', '식당 및 주방', '주방 휴게실', '다목적실',
+            '직원휴게실', '방재실', '문서고'
+        ],
+        '지하층 구역': [
+            '지하 크린룸', '창고', '미화 협력사 휴게실', '일반창고',
+            '컨트롤룸', '기계실', '전기실', '발전기실'
+        ],
+        '지원조 임무': '<strong>현장 안전통제 및 집결지 안내:</strong> GATE1, GATE2 앞 옥외 등 인원 밀집 예상 지역에서 안전을 확보하고 피난 유도.<br><br><strong>예비 인력 운영:</strong> 각 구역에 인원이 부재할 경우 즉시 투입하여 임무를 대행.'
+    };
 
-        /* 체크리스트 스타일 */
-        .popup-list ul { list-style: none; padding: 0; margin: 0; }
-        .popup-list li { margin-bottom: 8px; padding-left: 0; position: relative; font-size: 0.95em; display: flex; align-items: flex-start; }
-        .popup-list li input[type="checkbox"] { margin-right: 10px; flex-shrink: 0; margin-top: 3px; }
-        .popup-list li.checked label { text-decoration: line-through; color: #777; }
-        
-        /* 2열 레이아웃 스타일 */
-        .popup-list.two-columns {
-            columns: 2;
-            -webkit-columns: 2;
-            -moz-columns: 2;
-            column-gap: 20px;
+    function openTab(evt, tabName) {
+        const tabcontent = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <a href="missions.html" class="back-btn">← 임무 목록으로 돌아가기</a>
-        <h1>피난유도팀 구역별 임무</h1>
-        
-        <div class="tab-container">
-            <button class="tab-btn active" onclick="openTab(event, 'floor1')">1층</button>
-            <button class="tab-btn" onclick="openTab(event, 'floor2-4')">2~4층</button>
-            <button class="tab-btn" onclick="openTab(event, 'basement-support')">지하 및 지원</button>
-        </div>
-        
-        <div id="floor1" class="tab-content active">
-            <div class="area-card" onclick="openPopup('1층-1구역')">
-                <h3>1층-1구역</h3>
-                <p class="area-summary">로비/접견실, 화장실/소회의실, 교육장, 중회의실2,3, 대회의실, 보건실 등</p>
-            </div>
-            <div class="area-card" onclick="openPopup('1층-2구역')">
-                <h3>1층-2구역</h3>
-                <p class="area-summary">자재창고, GPU, GPU 용접실, 품질분석실 등</p>
-            </div>
-            <div class="area-card" onclick="openPopup('1층-3구역')">
-                <h3>1층-3구역</h3>
-                <p class="area-summary">주안 GSS, 협력사 벤더 등</p>
-            </div>
-            <div class="area-card" onclick="openPopup('1층-4구역')">
-                <h3>1층-4구역</h3>
-                <p class="area-summary">GSS, IGS, 소모품창고, 반출입구 등</p>
-            </div>
-        </div>
-        
-        <div id="floor2-4" class="tab-content">
-            <div class="area-card" onclick="openPopup('2층 구역')">
-                <h3>2층 구역</h3>
-                <p class="area-summary">피트니스, 탈의실, 직원휴게실 등</p>
-            </div>
-            <div class="area-card" onclick="openPopup('3층-1구역')">
-                <h3>3층-1구역</h3>
-                <p class="area-summary">경영지원실, 부사장실, 대회의실, 행복A,B 등</p>
-            </div>
-            <div class="area-card" onclick="openPopup('3층-2구역')">
-                <h3>3층-2구역</h3>
-                <p class="area-summary">연구소WS, 생산기술WS, 고객지원창고, 전산실 등</p>
-            </div>
-            <div class="area-card" onclick="openPopup('4층 구역')">
-                <h3>4층 구역</h3>
-                <p class="area-summary">카페, 식당 및 주방, 다목적실, 방재실 등</p>
-            </div>
-        </div>
-
-        <div id="basement-support" class="tab-content">
-            <div class="area-card" onclick="openPopup('지하층 구역')">
-                <h3>지하층 구역</h3>
-                <p class="area-summary">지하 크린룸, 창고, 기계실, 전기실, 발전기실 등</p>
-            </div>
-            <div class="area-card" onclick="openPopup('지원조 임무')">
-                <h3>지원조 임무</h3>
-                <p class="area-summary">게이트 앞, 옥외 등 인원 통제 및 집결지 안내</p>
-            </div>
-        </div>
-    </div>
-    
-    <div id="info-popup" class="popup">
-        <div class="popup-content">
-            <span class="popup-close" onclick="closePopup()">&times;</span>
-            <h3 class="popup-title"></h3>
-            <div id="popup-detail-list"></div>
-        </div>
-    </div>
-
-    <script>
-        const areaData = {
-            '1층-1구역': [
-                '로비/접견실', '화장실/소회의실', '교육장', '중회의실2', '중회의실3',
-                '대회의실', '보건실', 'TC룸/TC룸 스막', 'GSS 측 화장실'
-            ],
-            '1층-2구역': [
-                '자재창고', 'GPU 스막', 'GPU', 'GPU 최종검사', 'GPU 용접실',
-                'GPU 준비실', '품질분석실'
-            ],
-            '1층-3구역': [
-                { text: '주안 GSS 스막' },
-                { text: '주안 GSS' },
-                { text: '1층 협력사 벤더1' },
-                { text: '1층 협력사 벤더2' },
-                { text: '1층 협력사 벤더3' },
-                { text: '1층 협력사 벤더4' },
-                { text: '1층 협력사 벤더5' },
-                { text: '2층 협력사 벤더6' },
-                { text: '2층 협력사 벤더7' },
-                { text: '2층 협력사 벤더8' },
-                { text: '2층 협력사 벤더9' },
-                { text: '2층 협력사 벤더10' }
-            ],
-            '1층-4구역': [
-                'GSS 스막', 'GSS', 'GSS PA', 'IGS', 'GSS 최종검사',
-                '소모품창고', '반출입구'
-            ],
-            '2층 구역': [
-                '피트니스', '탈의실', '화장실, 세탁실', '직원휴게실'
-            ],
-            '3층-1구역': [
-                '경영지원실/ 부사장실', '대회의실', '행복A 회의실', '행복B 회의실', '화장실', '탕비실',
-                '중회의실', '자유A 회의실', '자유B 회의실', '자유C 회의실', '자유D 회의실', '직속,영업 WS/ 대표이사실'
-            ],
-            '3층-2구역': [
-                '연구소 WS', '생산기술WS', '고객지원창고', '소통A 회의실', '소통B 회의실',
-                '제조,CS WS', '전산실, 서버실', '제품TEST실/ 제어 TEST실', '공조실',
-                '자재창고'
-            ],
-            '4층 구역': [
-                '카페', '식당 및 주방', '주방 휴게실', '다목적실',
-                '직원휴게실', '방재실', '문서고'
-            ],
-            '지하층 구역': [
-                '지하 크린룸', '창고', '미화 협력사 휴게실', '일반창고',
-                '컨트롤룸', '기계실', '전기실', '발전기실'
-            ],
-            '지원조 임무': '<strong>현장 안전통제 및 집결지 안내:</strong> GATE1, GATE2 앞 옥외 등 인원 밀집 예상 지역에서 안전을 확보하고 피난 유도.<br><br><strong>예비 인력 운영:</strong> 각 구역에 인원이 부재할 경우 즉시 투입하여 임무를 대행.'
-        };
-
-        function openTab(evt, tabName) {
-            const tabcontent = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            const tablinks = document.getElementsByClassName("tab-btn");
-            for (let i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
+        const tablinks = document.getElementsByClassName("tab-btn");
+        for (let i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
         }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
 
-        function openPopup(area) {
-            const popup = document.getElementById('info-popup');
-            const popupTitle = popup.querySelector('.popup-title');
-            const popupDetailList = document.getElementById('popup-detail-list');
+    function openPopup(area) {
+        const popup = document.getElementById('info-popup');
+        const popupTitle = popup.querySelector('.popup-title');
+        const popupDetailList = document.getElementById('popup-detail-list');
 
-            popupTitle.textContent = area;
-            popupDetailList.innerHTML = '';
+        popupTitle.textContent = area;
+        popupDetailList.innerHTML = '';
 
-            const data = areaData[area];
-            if (typeof data === 'string') {
-                popupDetailList.innerHTML = `<p>${data}</p>`;
-            } else if (Array.isArray(data)) {
-                const ul = document.createElement('ul');
-                const listWrapper = document.createElement('div');
-                listWrapper.classList.add('popup-list');
+        // 피난안내도 이미지 추가
+        const escapeMapImg = document.createElement('img');
+        escapeMapImg.src = 'https://github.com/hyunjiklee119-collab/FRT119/raw/8aec6e959c01f7ecf367af0a30f91c99d2716568/562119_179569_1341.jpg';
+        escapeMapImg.alt = '피난안내도';
+        escapeMapImg.style.maxWidth = '100%';
+        escapeMapImg.style.height = 'auto';
+        escapeMapImg.style.marginBottom = '15px';
+        escapeMapImg.style.borderRadius = '5px';
+        popupDetailList.appendChild(escapeMapImg);
 
-                if (data.length > 5) {
-                    listWrapper.classList.add('two-columns');
-                } else {
-                    listWrapper.classList.remove('two-columns');
+        const data = areaData[area];
+        if (typeof data === 'string') {
+            popupDetailList.innerHTML += `<p>${data}</p>`;
+        } else if (Array.isArray(data)) {
+            const ul = document.createElement('ul');
+            const listWrapper = document.createElement('div');
+            listWrapper.classList.add('popup-list');
+
+            if (data.length > 5) {
+                listWrapper.classList.add('two-columns');
+            } else {
+                listWrapper.classList.remove('two-columns');
+            }
+
+            data.forEach((item, index) => {
+                const li = document.createElement('li');
+                const checkboxId = `${area}-${index}`;
+                const isChecked = localStorage.getItem(checkboxId) === 'true';
+                const itemText = typeof item === 'object' ? item.text : item;
+
+                li.innerHTML = `
+                    <input type="checkbox" id="${checkboxId}" ${isChecked ? 'checked' : ''}>
+                    <label for="${checkboxId}">${itemText}</label>
+                `;
+                if (isChecked) {
+                    li.classList.add('checked');
                 }
 
-                data.forEach((item, index) => {
-                    const li = document.createElement('li');
-                    const checkboxId = `${area}-${index}`;
-                    const isChecked = localStorage.getItem(checkboxId) === 'true';
-                    const itemText = typeof item === 'object' ? item.text : item;
-
-                    li.innerHTML = `
-                        <input type="checkbox" id="${checkboxId}" ${isChecked ? 'checked' : ''}>
-                        <label for="${checkboxId}">${itemText}</label>
-                    `;
-                    if (isChecked) {
+                li.querySelector('input').addEventListener('change', (e) => {
+                    if (e.target.checked) {
                         li.classList.add('checked');
+                        localStorage.setItem(checkboxId, 'true');
+                    } else {
+                        li.classList.remove('checked');
+                        localStorage.setItem(checkboxId, 'false');
                     }
-
-                    li.querySelector('input').addEventListener('change', (e) => {
-                        if (e.target.checked) {
-                            li.classList.add('checked');
-                            localStorage.setItem(checkboxId, 'true');
-                        } else {
-                            li.classList.remove('checked');
-                            localStorage.setItem(checkboxId, 'false');
-                        }
-                    });
-
-                    ul.appendChild(li);
                 });
-                listWrapper.appendChild(ul);
-                popupDetailList.appendChild(listWrapper);
-            }
 
-            popup.style.display = 'flex';
+                ul.appendChild(li);
+            });
+            listWrapper.appendChild(ul);
+            popupDetailList.appendChild(listWrapper);
         }
 
-        function closePopup() {
-            document.getElementById('info-popup').style.display = 'none';
-        }
-        
-        window.addEventListener('click', function(event) {
-            const popup = document.getElementById('info-popup');
-            if (event.target === popup) {
-                closePopup();
-            }
-        });
+        popup.style.display = 'flex';
+    }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('floor1').style.display = 'block';
-        });
-    </script>
-</body>
-</html>
+    function closePopup() {
+        document.getElementById('info-popup').style.display = 'none';
+    }
+    
+    window.addEventListener('click', function(event) {
+        const popup = document.getElementById('info-popup');
+        if (event.target === popup) {
+            closePopup();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('floor1').style.display = 'block';
+    });
+</script>
