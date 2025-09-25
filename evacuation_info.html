@@ -23,7 +23,7 @@
         .tab-content { display: none; padding: 20px 0; }
         .tab-content.active { display: block; }
         
-        /* 구역 카드 스타일 (팝업 호출용) */
+        /* 구역 카드 스타일 */
         .area-card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin-bottom: 15px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .area-card:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); }
         .area-card h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.2em; color: #333; }
@@ -31,14 +31,14 @@
         .area-card.common-mission { background-color: #fff3f3; border-left: 5px solid #d9534f; cursor: default; }
         .area-card.common-mission h3 { color: #d9534f; }
 
-        /* 팝업 스타일 (구역별 체크리스트 팝업) */
+        /* 팝업 스타일 */
         .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 1000; }
         .popup-content { 
             background-color: #fff; 
             padding: 25px; 
             border-radius: 10px; 
             width: 95%; 
-            max-width: 550px; 
+            max-width: 650px; /* 3열을 위해 최대 너비 증가 */
             position: relative; 
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
             max-height: 95vh; 
@@ -49,7 +49,7 @@
         .popup-close { position: absolute; top: 10px; right: 15px; font-size: 1.5em; color: #aaa; cursor: pointer; z-index: 20; }
         .popup-close:hover { color: #333; }
 
-        /* 캡처 대상 컨테이너: 고정 헤더와 스크롤 컨텐츠를 포함 */
+        /* 캡처 대상 컨테이너 */
         #capture-target { 
             background-color: #fff; 
             border-radius: 5px; 
@@ -70,7 +70,7 @@
             z-index: 10;
         }
 
-        /* 팝업 제목 및 요약 영역 */
+        /* 팝업 제목 및 버튼 영역 */
         .popup-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .popup-title-group { display: flex; align-items: center; }
         .popup-title { font-size: 1.3em; color: #d9534f; margin: 0; }
@@ -93,6 +93,26 @@
             margin-top: 5px;
             margin-bottom: 0;
         }
+        
+        /* 일괄 체크 버튼 스타일 */
+        #bulk-check-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .bulk-check-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9em;
+        }
+        #check-all-btn { background-color: #5cb85c; color: white; }
+        #check-all-btn:hover { background-color: #4cae4c; }
+        #uncheck-all-btn { background-color: #f0ad4e; color: white; }
+        #uncheck-all-btn:hover { background-color: #eb9316; }
 
         /* 스크롤 가능한 본문 영역 */
         #popup-scroll-content {
@@ -110,12 +130,23 @@
             flex-wrap: wrap;
             gap: 0 20px; 
         }
-        /* 2열 배열 스타일 */
-        .checklist-wrapper.multi-column {
+        /* 2열 배열 스타일 (7개 초과) */
+        .checklist-wrapper.multi-column-2 {
             display: grid;
             grid-template-columns: 1fr 1fr; 
             gap: 0 20px;
         }
+        /* 3열 배열 스타일 (14개 초과) */
+        .checklist-wrapper.multi-column-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 0 15px;
+        }
+        /* 3열에서 항목 글자 크기 조정 */
+        .checklist-wrapper.multi-column-3 .item-name {
+             font-size: 0.9em;
+        }
+
         /* 지원조 임무 텍스트 스타일 */
         #popup-detail-list p {
             margin-top: 0; 
@@ -127,7 +158,7 @@
             margin-top: 10px;
         }
 
-        /* 체크리스트 아이템 스타일 (이하 동일) */
+        /* 체크리스트 아이템 스타일 */
         .checklist-item {
             display: flex; 
             align-items: center;
@@ -137,7 +168,8 @@
             cursor: pointer;
             width: 100%; 
         }
-        .checklist-wrapper.multi-column .checklist-item {
+        .checklist-wrapper.multi-column-2 .checklist-item,
+        .checklist-wrapper.multi-column-3 .checklist-item {
             width: auto; 
         }
 
@@ -220,13 +252,17 @@
         .sub-accordion-content.active { max-height: 500px; padding: 15px; } 
 
 
-        /* 모바일 최적화 (550px 이하) - 2열 전환 미적용 */
+        /* 모바일 최적화 (550px 이하) - 2열, 3열 전환 미적용 */
         @media (max-width: 550px) {
-            .checklist-wrapper.multi-column {
+            .checklist-wrapper.multi-column-2,
+            .checklist-wrapper.multi-column-3 {
                 grid-template-columns: 1fr; 
             }
+            .checklist-wrapper.multi-column-3 .item-name {
+                font-size: 1em; /* 모바일에서는 다시 원래 크기로 */
+            }
 
-            .popup-content { padding: 15px; }
+            .popup-content { padding: 15px; max-width: 95%; }
             .fixed-header-container {
                 padding: 15px 15px 15px 15px; 
             }
@@ -236,6 +272,13 @@
             }
             .popup-title { font-size: 1.2em; }
             #back-to-list-btn { margin-right: 10px; }
+            #bulk-check-area {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .bulk-check-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -298,7 +341,10 @@
 
                     <img id="popup-image" src="" alt="구역별 도면" class="popup-image">
                     
-                    <div id="bulk-check-area" class="bulk-check-buttons" style="display:none;"></div>
+                    <div id="bulk-check-area" style="display:none;">
+                         <button id="check-all-btn" class="bulk-check-btn">✅ 일괄 체크</button>
+                         <button id="uncheck-all-btn" class="bulk-check-btn">❌ 일괄 해제</button>
+                    </div>
                 </div>
                 
                 <div id="popup-scroll-content">
@@ -398,15 +444,15 @@
             const popupDetailList = document.getElementById('popup-scroll-content').querySelector('#popup-detail-list');
             const downloadBtn = document.getElementById('download-btn');
             const backBtn = document.getElementById('back-to-list-btn');
+            const bulkCheckArea = document.getElementById('bulk-check-area');
+            const checkAllBtn = document.getElementById('check-all-btn');
+            const uncheckAllBtn = document.getElementById('uncheck-all-btn');
 
             
             popup.setAttribute('data-current-area', area);
             popupTitle.textContent = area;
-            
-            // ❗ 문제 해결: 팝업 내용을 초기화합니다.
             popupDetailList.innerHTML = ''; 
             
-            // ⭐ 문제 해결: 숨김 컨테이너에서 원형 요소를 복사하여 가져옵니다.
             const hiddenContainer = document.getElementById('hidden-containers');
             const checklistContainer = hiddenContainer.querySelector('#checklist-items-container').cloneNode(true);
             const memoContainer = hiddenContainer.querySelector('#memo-input-container').cloneNode(true);
@@ -415,9 +461,8 @@
             const data = areaData[area];
             
             if (Array.isArray(data)) {
-                // 일반 구역 (체크리스트 O, 이미지 O/X, 다운로드 O)
+                // 일반 구역 (체크리스트 O)
                 
-                // DOM에 복사한 체크리스트와 메모 컨테이너 삽입
                 popupDetailList.appendChild(checklistContainer);
                 popupDetailList.appendChild(memoContainer);
 
@@ -432,14 +477,22 @@
                 backBtn.style.display = 'inline-block';
                 downloadBtn.style.display = 'block'; // 다운로드 버튼 표시
                 memoContainer.style.display = 'block'; // 메모 입력란 표시
+                bulkCheckArea.style.display = 'flex'; // 일괄 체크 버튼 영역 표시
+
+                // 기존 클래스 제거
+                checklistContainer.classList.remove('multi-column-2', 'multi-column-3');
                 
-                
-                // 2열 전환 여부 결정 (8개 초과 시)
-                if (data.length > 8) {
-                    checklistContainer.classList.add('multi-column');
-                } else {
-                    checklistContainer.classList.remove('multi-column');
+                // ⭐ 수정된 부분: 7개 초과 시 2열, 14개 초과 시 3열
+                if (data.length > 14) {
+                    checklistContainer.classList.add('multi-column-3');
+                } else if (data.length > 7) {
+                    checklistContainer.classList.add('multi-column-2');
                 }
+                
+                // 일괄 체크 이벤트 리스너 재설정 (클론된 요소에 연결)
+                checkAllBtn.onclick = () => setAllCompletion(area, true, checklistContainer);
+                uncheckAllBtn.onclick = () => setAllCompletion(area, false, checklistContainer);
+
 
                 // 체크리스트 항목 로드
                 data.forEach((item, index) => {
@@ -472,18 +525,15 @@
                 globalMemoInput.oninput = (e) => saveGlobalMemo(area, e.target.value);
 
             } else if (typeof data === 'string') {
-                // 지원조 임무 처리 (체크리스트 X, 이미지 X, 다운로드 X)
+                // 지원조 임무 처리 (체크리스트 X)
                 
-                // 이미지 숨김
                 popupImage.style.display = 'none';
-                
-                // 다운로드 버튼 숨김
                 downloadBtn.style.display = 'none'; 
+                bulkCheckArea.style.display = 'none'; // 일괄 체크 버튼 영역 숨김
                 
-                // 텍스트 내용만 로드 (innerHTML로 대체)
+                // 텍스트 내용만 로드
                 popupDetailList.innerHTML = `<p>${data}</p>`; 
                 
-                // 나머지 요소 숨김 (복사된 memoContainer는 어차피 popupDetailList에 삽입되지 않음)
                 document.getElementById('popup-status-summary').style.display = 'none'; 
                 backBtn.style.display = 'inline-block';
             }
@@ -518,6 +568,21 @@
             saveCompletionStatus(area, index, isCompleted);
         }
         
+        // ⭐ 추가된 기능: 일괄 체크/해제 함수
+        function setAllCompletion(area, isCompleted, container) {
+            const items = container.querySelectorAll('.checklist-item');
+            items.forEach((item, index) => {
+                if (isCompleted) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+                saveCompletionStatus(area, index, isCompleted);
+            });
+            alert(isCompleted ? `${area}의 모든 항목을 체크했습니다.` : `${area}의 모든 항목을 해제했습니다.`);
+        }
+
+
         // --- 이미지 캡처 함수 (일반 구역만 동작) ---
 
         function downloadChecklistAsImage() {
@@ -531,30 +596,28 @@
             const captureTarget = document.getElementById('capture-target');
             const popupTitle = area || document.querySelector('#info-popup .popup-title').textContent;
             
-            // 캡처 전에 입력 필드의 현재 값을 DOM에 반영 (중요)
-            // 캡처 대상 내부에서 메모 입력 필드를 찾습니다.
+            // 캡처 전에 입력 필드의 현재 값을 DOM에 반영
             const globalMemoInput = captureTarget.querySelector('#global-memo-input');
             if(globalMemoInput) {
-                // 텍스트에어리어의 value 속성을 설정하여 html2canvas가 내용을 읽을 수 있도록 함
                 globalMemoInput.setAttribute('value', globalMemoInput.value); 
             }
 
-            // 캡처 전에 고정 헤더 영역의 스타일 임시 변경 (sticky 해제)
+            // 캡처 전 임시 스타일 변경 및 버튼 숨김
             const fixedHeader = captureTarget.querySelector('.fixed-header-container');
-            if(fixedHeader) fixedHeader.style.position = 'static';
-
-            // 캡처 시 뒤로가기 버튼 숨김
             const backBtn = document.getElementById('back-to-list-btn');
-            const originalBackBtnDisplay = backBtn.style.display;
-            backBtn.style.display = 'none';
-
-
-            // 캡처를 위해 스크롤 컨텐츠의 높이를 임시 조정
+            const bulkCheckArea = document.getElementById('bulk-check-area');
             const scrollContent = document.getElementById('popup-scroll-content');
+
+            if(fixedHeader) fixedHeader.style.position = 'static';
+            const originalBackBtnDisplay = backBtn.style.display;
+            const originalBulkCheckDisplay = bulkCheckArea.style.display;
+            backBtn.style.display = 'none';
+            bulkCheckArea.style.display = 'none'; // 일괄 체크 버튼 숨김
+
             const originalMaxHeight = scrollContent.style.maxHeight;
             const originalOverflow = scrollContent.style.overflowY;
 
-            scrollContent.style.maxHeight = 'none'; // 스크롤을 풀고 전체 내용을 캡처
+            scrollContent.style.maxHeight = 'none'; 
             scrollContent.style.overflowY = 'visible';
 
 
@@ -567,8 +630,9 @@
                 // 캡처 후 스타일 복원
                 if(fixedHeader) fixedHeader.style.position = 'sticky'; 
                 backBtn.style.display = originalBackBtnDisplay;
-                scrollContent.style.maxHeight = originalMaxHeight; // 원본 maxHeight 복원
-                scrollContent.style.overflowY = originalOverflow; // 원본 overflow 복원
+                bulkCheckArea.style.display = originalBulkCheckDisplay; // 일괄 체크 버튼 복원
+                scrollContent.style.maxHeight = originalMaxHeight; 
+                scrollContent.style.overflowY = originalOverflow; 
 
                 const image = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
