@@ -6,24 +6,295 @@
     <title>화재대응 조직 임무</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans KR', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; line-height: 1.6; }
-        .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
-        header { text-align: center; margin-bottom: 20px; }
-        h1 { color: #d9534f; font-size: 1.8em; margin-top: 10px; }
-        h2 { color: #337ab7; font-size: 1.2em; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
-        .wonik-logo { max-width: 60%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
-        .contact-info { background-color: #ffebeb; padding: 15px; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 2px solid #d9534f; }
-        .contact-info h2 { margin: 0; font-size: 1.2em; color: #d9534f; border-bottom: none; }
-        .contact-info ul { list-style: none; padding: 0; margin: 10px 0 0 0; }
-        .contact-info li { margin-bottom: 5px; font-weight: bold; }
-        .contact-info li a { color: #333; text-decoration: none; }
-        .common-actions { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin-top: 20px; }
-        .common-actions h2 { margin-top: 0; color: #d9534f; font-size: 1.3em; text-align: center; border-bottom: none; }
-        .common-actions .action-list p { margin: 5px 0; padding-left: 20px; position: relative; }
-        .common-actions .action-list p:before { content: "•"; color: #d9534f; position: absolute; left: 0; font-size: 1.2em; }
-        .link-container { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-        .link-container a { display: block; text-align: center; background-color: #337ab7; color: white; padding: 15px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: background-color 0.2s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
-        .link-container a:hover { background-color: #286090; }
+        :root {
+            --primary-color: #d9534f;
+            --secondary-color: #337ab7;
+            --background-color: #f4f4f4;
+            --white-color: #fff;
+            --light-red: #ffebeb;
+            --light-blue: #eaf6ff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 95%;
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: clamp(1.5em, 5vw, 2.5em);
+            margin-top: 10px;
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            font-size: clamp(1.2em, 4vw, 1.8em);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 25px;
+            text-align: center;
+        }
+        
+        .wonik-logo {
+            max-width: 60%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            background-color: var(--white-color);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .contact-info {
+            background-color: var(--light-red);
+            border: 2px solid var(--primary-color);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contact-info h2 {
+            margin: 0;
+            font-size: clamp(1.1em, 3.5vw, 1.6em);
+            color: var(--primary-color);
+            border-bottom: none;
+        }
+        
+        .contact-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+        }
+        
+        .contact-info li {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .contact-info li a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        
+        .common-actions .action-list p {
+            margin: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .common-actions .action-list p:before {
+            content: "•";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+        
+        .link-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .link-container a {
+            display: block;
+            text-align: center;
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+            padding: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .link-container a:hover {
+            background-color: #286090;
+        }
+        
+        /* 나의 임무 확인 섹션 CSS 수정 */
+        .my-role-section .dropdown-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: space-between;
+        }
+        
+        .my-role-section .dropdown-container > * {
+            flex-grow: 1;
+            min-width: 120px;
+        }
+        
+        .my-role-section select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E") no-repeat right 10px center / 12px;
+        }
+        
+        .my-role-section #myRoleDisplay {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--light-blue);
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--secondary-color);
+            display: none;
+        }
+        
+        .my-role-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .my-role-line select {
+            flex-grow: 1;
+        }
+        
+        .my-role-line input {
+            flex-grow: 2;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: #f8f8f8;
+            cursor: default;
+        }
+        
+        .contact-info .popup-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .contact-info .popup-button:hover {
+            background-color: #286090;
+        }
+        
+        .contact-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background-color: var(--white-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .contact-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        .contact-popup h3 {
+            margin-top: 0;
+            color: var(--secondary-color);
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .contact-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .contact-list li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .contact-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .contact-list .contact-name {
+            font-weight: bold;
+        }
+        
+        .contact-list .contact-role {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .contact-list .contact-phone {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .contact-popup .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5em;
+            color: #aaa;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -40,10 +311,24 @@
                     <li>원익 보안실: <a href="tel:031-230-4625">031-230-4625</a></li>
                     <li>소방안전관리자: <a href="tel:010-9466-9082">010-9466-9082</a></li>
                 </ul>
+                <button class="popup-button" onclick="showPopup()">전체 조직 연명부 보기</button>
             </div>
         </header>
         <main>
-            <div class="common-actions">
+            <div class="card my-role-section">
+                <h2>나의 임무 확인</h2>
+                <div class="my-role-line">
+                    <select id="departmentSelect">
+                        <option value="">부서 선택</option>
+                    </select>
+                    <select id="nameSelect" disabled>
+                        <option value="">이름 선택</option>
+                    </select>
+                    <input type="text" id="roleDisplay" placeholder="임무" readonly>
+                </div>
+            </div>
+            <hr>
+            <div class="card common-actions">
                 <h2>🔥 화재 발생 시 가장 먼저 해야 할 일</h2>
                 <div class="action-list">
                     <p>1. **"불이야!"** 크게 외쳐 주변에 화재를 알립니다.</p>
@@ -58,5 +343,91 @@
             </div>
         </main>
     </div>
+    
+    <div id="contactPopupOverlay" class="contact-popup-overlay" onclick="hidePopup()"></div>
+    <div id="contactPopup" class="contact-popup">
+        <span class="close-btn" onclick="hidePopup()">&times;</span>
+        <h3>비상 연락 조직</h3>
+        <div class="contact-list">
+            <ul>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        let rosterData = [];
+        function showPopup() {
+            document.getElementById('contactPopup').style.display = 'block';
+            document.getElementById('contactPopupOverlay').style.display = 'block';
+        }
+        function hidePopup() {
+            document.getElementById('contactPopup').style.display = 'none';
+            document.getElementById('contactPopupOverlay').style.display = 'none';
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const departmentSelect = document.getElementById('departmentSelect');
+            const nameSelect = document.getElementById('nameSelect');
+            const roleDisplay = document.getElementById('roleDisplay');
+            const contactList = document.querySelector('.contact-list ul');
+            fetch('roster.html')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    rosterData = Array.from(doc.getElementById('roster-data').children).map(person => ({
+                        department: person.getAttribute('data-department'),
+                        name: person.getAttribute('data-name'),
+                        role: person.getAttribute('data-role'),
+                        phone: person.getAttribute('data-phone')
+                    }));
+                    const departments = [...new Set(rosterData.map(p => p.department))].sort();
+                    departments.forEach(dept => {
+                        const option = document.createElement('option');
+                        option.value = dept;
+                        option.textContent = dept;
+                        departmentSelect.appendChild(option);
+                    });
+                    rosterData.forEach(person => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <div>
+                                <span class="contact-name">${person.name}</span>
+                                <br>
+                                <span class="contact-role">${person.department} - ${person.role}</span>
+                            </div>
+                            <a href="tel:${person.phone}" class="contact-phone">📞 전화</a>
+                        `;
+                        contactList.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error('Error loading the roster:', error));
+            departmentSelect.addEventListener('change', () => {
+                const selectedDept = departmentSelect.value;
+                nameSelect.innerHTML = '<option value="">이름 선택</option>';
+                nameSelect.disabled = true;
+                roleDisplay.value = '';
+                if (selectedDept) {
+                    const namesInDept = rosterData.filter(p => p.department === selectedDept).map(p => p.name).sort();
+                    namesInDept.forEach(name => {
+                        const option = document.createElement('option');
+                        option.value = name;
+                        option.textContent = name;
+                        nameSelect.appendChild(option);
+                    });
+                    nameSelect.disabled = false;
+                }
+            });
+            nameSelect.addEventListener('change', () => {
+                const selectedName = nameSelect.value;
+                roleDisplay.value = '';
+                if (selectedName) {
+                    const person = rosterData.find(p => p.name === selectedName && p.department === departmentSelect.value);
+                    if (person) {
+                        roleDisplay.value = person.role;
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
