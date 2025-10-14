@@ -42,27 +42,27 @@
             <div class="mission-card" onclick="openPopup('초기소화반')">
                 <span class="card-icon">🧯</span>
                 <h3>초기소화반</h3>
-                <p class="mission-summary">화재 현장 초기 진압 및 상황 전파</p>
+                <p class="mission-summary">선발대 : 화재 현장 초기 진압 및 상황 전파</p>
             </div>
             <div class="mission-card" onclick="openPopup('응급구조반')">
                 <span class="card-icon">⛑️</span>
                 <h3>응급구조반</h3>
-                <p class="mission-summary">인명구조 및 부상자 응급 처치</p>
+                <p class="mission-summary">예비대 : 인명구조 및 부상자 응급 처치</p>
             </div>
             <div class="mission-card" onclick="openPopup('방호안전반')">
                 <span class="card-icon">🚧</span>
                 <h3>방호안전반</h3>
-                <p class="mission-summary">위험 요소 차단 및 현장 통제</p>
+                <p class="mission-summary">후발대 : 설비 관제, 위험 요소 차단 및 통제</p>
             </div>
             <div class="mission-card" onclick="openPopup('지휘통제팀')">
                 <span class="card-icon">📢</span>
                 <h3>지휘통제팀</h3>
-                <p class="mission-summary">상황 총괄 및 조직원 지휘·관리</p>
+                <p class="mission-summary">지휘부 : 상황 총괄 및 조직원 지휘·관리</p>
             </div>
             <a href="evacuation_info.html" class="mission-card">
                 <span class="card-icon">🏃</span>
                 <h3>피난유도팀</h3>
-                <p class="mission-summary">인원 대피 유도 및 안전 구역 확보</p>
+                <p class="mission-summary">인원 대피 유도 및 잔류자 확인</p>
             </a>
         </div>
     </div>
@@ -80,37 +80,39 @@
             '초기소화반': {
                 title: '초기소화반 세부 임무',
                 content: [
-                    { title: '1. 출동 준비', description: '<ul><li>장비 위치 확인 (방화복, 공기호흡기 등)</li><li>비상연락망 및 연락 수단 확인</li></ul>' },
-                    { title: '2. 현장 도착', description: '<ul><li>화재 정보 확인 (종류, 규모 등)</li><li>화재 상황 전파 및 보고 / 긴급 신고</li></ul>' },
-                    { title: '3. 초기 소화', description: '<ul><li>소화기, 소화전 등 적정 소화 설비 사용</li><li>화재 확산 방지를 위해 방화문, 셔터 폐쇄</li></ul>' },
+                    { title: '1. 출동 준비', description: '<ul><li>보호구 점검 및 확인 (방화복, 공기호흡기 등)</li><li>비상연락망 및 연락 수단 확인</li></ul>' },
+                    { title: '2. 현장 도착', description: '<ul><li>화재 정보 확인 (종류, 규모 등)</li><li>화재 상황 전파 및 보고 / 필요 시 긴급 신고</li></ul>' },
+                    { title: '3. 초기 소화', description: '<ul><li>소화기, 소화전 등 적정 소화 설비 사용</li><li>인화성물질 등 화재 원인을 제거</li><li>화재 확산을 대비하여 SVP, 방화문, 방화셔터 조작</li></ul>' },
                     { title: '4. 후속 조치', description: '<ul><li>진화 여부 확인 (재발화 등)</li><li>지휘통제반에 상황 보고</li></ul>' }
                 ]
             },
             '응급구조반': {
                 title: '응급구조반 세부 임무',
                 content: [
-                    { title: '1. 출동 준비', description: '<ul><li>개인 보호구 준비</li><li>응급구조장비 (들것, 구급키트 등) 점검</li></ul>' },
+                    { title: '1. 출동 준비', description: '<ul><li>보호구 점검 및 확인 (안전모, 안전화 등)</li><li>응급구조장비 (들것, 구급키트 등) 점검</li></ul>' },
                     { title: '2. 현장 도착', description: '<ul><li>화재 현장 내 인명 피해 가능성 파악</li><li>구조 대상자 탐색 및 위치 확인</li></ul>' },
-                    { title: '3. 응급 구조', description: '<ul><li>요구조자 신속 구조 및 안전한 장소로 이송</li><li>부상자 발생 시 응급 처치 (심폐소생술 등)</li></ul>' },
-                    { title: '4. 후속 조치', description: '<ul><li>부상자 및 사망자 명단 작성 및 보고</li><li>지휘통제반에 구조 및 응급상황 보고</li></ul>' }
+                    { title: '3. 응급 구조', description: '<ul><li>요구조자 신속 구조 및 안전한 장소로 이송</li><li>부상자 발생 시 응급 처치 (심폐소생술 등)</li><li>다수 인명 피해 시 CPR 수료인원 등 자원자 편성·운영</li></ul>' },
+                    { title: '4. 후속 조치', description: '<ul><li>부상자 및 사망자 명단 작성 및 보고</li><li>지휘통제반에 구조 및 응급상황 보고</li><li>소방대 도착 시 응급의료소 설치 지원</li></ul>' }
                 ]
             },
             '방호안전반': {
                 title: '방호안전반 세부 임무',
                 content: [
-                    { title: '1. 출동 준비', description: '<ul><li>무전기, 확성기 등 현장 통제 장비 준비</li><li>경계선, 안전 띠 등 현장 구획 장비 준비</li></ul>' },
-                    { title: '2. 현장 도착', description: '<ul><li>화재 현장 주변 통제선 설정 및 경비</li><li>소화반, 구조반이 안전하게 활동할 수 있도록 지원</li></ul>' },
-                    { title: '3. 현장 통제', description: '<ul><li>소방차량 진입로 확보 및 불필요한 인원 접근 차단</li><li>2차 사고 방지 위해 가스, 전기 등 위험물 차단 조치</li></ul>' },
+                    { title: '1. 출동 준비', description: '<ul><li>보호구 및 통제 장비 점검 및 확인 (안전모, 공기호흡기, 라바콘 등)</li><li>가스, 전기 등 유틸리티 모니터링 지원 (방재실)</li></ul>' },
+                    { title: '2. 현장 도착', description: '<ul><li>화재 현장 주변 통제선 설정 및 경비</li><li>소화 및 구조반이 안전하게 활동할 수 있도록 후속 지원</li></ul>' },
+                    { title: '3. 방호 활동', description: '<ul><li>2차 사고 방지 위해 가스, 전기 등 위험물 차단 조치</li><li>화재 확산 방지를 위한 방화문, 방화셔터 조작</li><li>위험구역 차단 및 통제 조치</li></ul>' },
                     { title: '4. 후속 조치', description: '<ul><li>화재 진압 완료 후 현장 정리 지원</li><li>출입 통제 해제 및 통제 상황 보고</li></ul>' }
                 ]
             },
             '지휘통제팀': {
                 title: '지휘통제팀 세부 임무',
                 content: [
-                    { title: '1. 현장 지휘소 설치', description: '<ul><li>화재 현장 안전이 확보된 지역에 지휘본부 설치</li><li>무전기, 통제 장비 등 지휘장비 준비</li></ul>' },
+                    { title: '1. 현장 지휘소 구성', description: '<ul><li>안전이 확보된 지역에 지휘본부 설치 (보안실, 방재실)</li><li>확성기, 통제 장비 등 지휘장비 준비</li></ul>' },
                     { title: '2. 상황 파악', description: '<ul><li>화재 발생 상황, 규모, 인명 피해 등 종합적 정보 수집</li><li>각 반의 활동 현황 실시간 모니터링 및 지시</li></ul>' },
                     { title: '3. 지휘 및 통제', description: '<ul><li>각 반의 임무 배정 및 효율적인 작전 지시</li><li>외부 유관기관 (소방서, 경찰)과 협조 및 정보 공유</li></ul>' },
-                    { title: '4. 후속 조치', description: '<ul><li>화재 진압 완료 후 종합 상황 보고서 작성</li><li>화재 원인 및 피해 규모 조사에 협조</li></ul>' }
+                    { title: '4. 후속 조치', description: '<ul><li>화재 진압 완료 후 종합 상황 보고서 작성</li><li>화재 원인 및 피해 규모 조사에 협조</li></ul>' },
+                    { title: '5. 상황관리자', description: '<ul><li>비상 시 상황 관리 기록</li><li>집결지 대피 인원 취합 및 보고</li></ul>' },
+                    { title: '6. 비상연락관', description: '<ul><li>비상 상황 접수 및 전파</li><li>비상방송 등을 활용한 비상 연락 실시</li><li>화재 대비한 소방시설 조작 및 관제</li></ul>' }
                 ]
             }
         };
