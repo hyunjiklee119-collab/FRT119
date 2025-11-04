@@ -246,7 +246,7 @@
             gap: 10px;
             margin-top: 20px;
         }
-        #download-btn, #send-sms-btn {
+        #download-btn, #send-sms-btn, #send-to-sheet-btn { /* 새 버튼 ID 추가 */
             width: 100%;
             padding: 12px;
             border: none;
@@ -254,11 +254,27 @@
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.2s;
+            box-sizing: border-box; /* 패딩 포함 크기 계산 */
         }
         #download-btn { background-color: #337ab7; color: white; }
         #download-btn:hover { background-color: #286090; }
         #send-sms-btn { background-color: #f0ad4e; color: white; }
         #send-sms-btn:hover { background-color: #eb9316; }
+
+        /* ▼▼▼ 새 버튼 스타일 추가 ▼▼▼ */
+        #send-to-sheet-btn {
+            background-color: #5cb85c; /* 녹색 계열 */
+            color: white;
+        }
+        #send-to-sheet-btn:hover {
+            background-color: #4cae4c;
+        }
+        #send-to-sheet-btn:disabled { /* 비활성화 스타일 */
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        /* ▲▲▲ 새 버튼 스타일 추가 ▲▲▲ */
+
 
         /* 공통 임무 아코디언 스타일 */
         .sub-accordion-item { border: 1px solid #ddd; margin-top: 10px; border-radius: 5px; overflow: hidden; }
@@ -290,8 +306,8 @@
 </head>
 <body>
     <div class="container">
-     <a href="missions.html" class="back-btn">
-  ← 임무 목록으로 돌아가기
+       <a href="missions.html" class="back-btn">
+     ← 임무 목록으로 돌아가기
 </a>
         <h1>피난유도팀 구역별 임무 및 체크</h1>
 
@@ -360,7 +376,11 @@
             <div class="popup-action-btn-group">
                 <button id="download-btn" onclick="downloadChecklistAsImage()">체크리스트 이미지로 다운로드</button>
                 <button id="send-sms-btn" style="display:none;" onclick="sendSMS()">문자로 전송</button>
-            </div>
+                
+                <button id="send-to-sheet-btn" style="display:none;" onclick="sendToGoogleSheet()">
+                    📊 Google Sheet으로 보고
+                </button>
+                </div>
         </div>
     </div>
 
@@ -401,6 +421,12 @@
             }
         };
 
+        // ▼▼▼ Google Apps Script 웹 앱 URL ▼▼▼
+        // ⚠️⚠️⚠️ 본인의 웹 앱 URL로 반드시 교체하세요! ⚠️⚠️⚠️
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwJ1RE8qmO9uWkyV33OW0Vw-WT0zNvaSuCLrQwHIOQOjl9xsGbbZO_-TY1QMZL99CS1/exec"; 
+        // ▲▲▲ Google Apps Script 웹 앱 URL ▲▲▲
+
+
         // --- LocalStorage 상태 관리 함수 ---
 
         function saveCompletionStatus(area, index, status) {
@@ -430,6 +456,7 @@
             const popupDetailList = document.getElementById('popup-scroll-content').querySelector('#popup-detail-list');
             const downloadBtn = document.getElementById('download-btn');
             const sendSmsBtn = document.getElementById('send-sms-btn');
+            const sendToSheetBtn = document.getElementById('send-to-sheet-btn'); // ◀◀◀ 새 버튼 변수
             const backBtn = document.getElementById('back-to-list-btn');
             const bulkCheckArea = document.getElementById('bulk-check-area');
             
@@ -450,6 +477,10 @@
                 backBtn.style.display = 'inline-block';
                 downloadBtn.style.display = 'block';
                 sendSmsBtn.style.display = 'block';
+                sendToSheetBtn.style.display = 'block'; // ◀◀◀ 새 버튼 보이기
+                sendToSheetBtn.textContent = '📊 Google Sheet으로 보고'; // ◀◀◀ 버튼 초기화
+                sendToSheetBtn.disabled = false; // ◀◀◀ 버튼 초기화
+
                 memoContainer.style.display = 'block';
                 bulkCheckArea.style.display = 'flex';
 
@@ -510,6 +541,7 @@
             } else if (typeof data === 'string') {
                 downloadBtn.style.display = 'none';
                 sendSmsBtn.style.display = 'none';
+                sendToSheetBtn.style.display = 'none'; // ◀◀◀ 새 버튼 숨기기
                 bulkCheckArea.style.display = 'none';
                 popupDetailList.innerHTML = `<p>${data}</p>`;
                 backBtn.style.display = 'inline-block';
@@ -608,6 +640,7 @@
             const scrollContent = document.getElementById('popup-scroll-content');
             const downloadBtn = document.getElementById('download-btn');
             const sendSmsBtn = document.getElementById('send-sms-btn');
+            const sendToSheetBtn = document.getElementById('send-to-sheet-btn'); // ◀◀◀
             const popupStatusSummary = document.getElementById('popup-status-summary');
 
             if(fixedHeader) fixedHeader.style.position = 'static';
@@ -615,11 +648,13 @@
             const originalBulkCheckDisplay = bulkCheckArea.style.display;
             const originalDownloadBtnDisplay = downloadBtn.style.display;
             const originalSendSmsBtnDisplay = sendSmsBtn.style.display;
+            const originalSendToSheetBtnDisplay = sendToSheetBtn.style.display; // ◀◀◀
             
             backBtn.style.display = 'none';
             bulkCheckArea.style.display = 'none';
             downloadBtn.style.display = 'none';
             sendSmsBtn.style.display = 'none';
+            sendToSheetBtn.style.display = 'none'; // ◀◀◀
             if(popupStatusSummary) popupStatusSummary.style.display = 'inline-block'; // 캡처 시 표시
 
             const originalMaxHeight = scrollContent.style.maxHeight;
@@ -638,6 +673,7 @@
                 bulkCheckArea.style.display = originalBulkCheckDisplay;
                 downloadBtn.style.display = originalDownloadBtnDisplay;
                 sendSmsBtn.style.display = originalSendSmsBtnDisplay;
+                sendToSheetBtn.style.display = originalSendToSheetBtnDisplay; // ◀◀◀
                 scrollContent.style.maxHeight = originalMaxHeight;
                 scrollContent.style.overflowY = originalOverflow;
                 if(popupStatusSummary) popupStatusSummary.style.display = 'inline-block';
@@ -680,6 +716,82 @@
                 alert("이 기능은 모바일 기기에서만 정상 작동합니다. 데스크톱에서는 문자 메시지 앱이 열리지 않을 수 있습니다.");
             }
         }
+
+        // ▼▼▼ 새 함수 추가 ▼▼▼
+        // --- Google Sheet 전송 함수 ---
+        function sendToGoogleSheet() {
+            const popup = document.getElementById('info-popup');
+            const area = popup.getAttribute('data-current-area');
+            
+            if (area === '지원조 임무') {
+                alert("지원조 임무는 Google Sheet으로 보고할 수 없습니다.");
+                return;
+            }
+
+            // URL이 placeholder인지 확인
+            if (WEB_APP_URL === "https://script.google.com/macros/s/AKfycbwJ1RE8qmO9uWkyV33OW0Vw-WT0zNvaSuCLrQwHIOQOjl9xsGbbZO_-TY1QMZL99CS1/exec") {
+                alert("오류: 웹 앱 URL이 설정되지 않았습니다. 스크립트에서 WEB_APP_URL을 확인하세요.");
+                return;
+            }
+
+            const reportBtn = document.getElementById('send-to-sheet-btn');
+            reportBtn.textContent = '전송 중...';
+            reportBtn.disabled = true;
+
+            // 1. 보고할 데이터 수집
+            const summaryText = document.getElementById('popup-status-summary').textContent.trim();
+            const memoText = document.getElementById('global-memo-input').value;
+
+            // 2. "불량(NG)" 항목 목록 수집
+            const ngItems = [];
+            const items = popup.querySelectorAll('.checklist-item');
+            items.forEach(item => {
+                if (item.getAttribute('data-status') === 'ng') {
+                    ngItems.push(item.querySelector('.item-name').textContent);
+                }
+            });
+
+            // 3. Apps Script로 보낼 데이터 객체(Payload) 생성
+            const payload = {
+                area: area,
+                status: summaryText,
+                ngItems: ngItems, // 불량 항목 배열
+                memo: memoText
+            };
+
+            // 4. fetch를 사용하여 Google Apps Script에 POST 요청 전송
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                mode: 'no-cors' // Google Apps Script에 보낼 때는 no-cors 모드 비활성화 (CORS 필요)
+                                // -> Google Apps Script 응답에 맞게 수정
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    alert('보고가 성공적으로 전송되었습니다.');
+                    reportBtn.textContent = '📊 보고 완료 (Google Sheet)';
+                    // 성공 후 비활성화 유지 (중복 전송 방지)
+                } else {
+                    throw new Error(data.message || '알 수 없는 오류');
+                }
+            })
+            .catch(error => {
+                console.error('Error sending report to Google Sheet:', error);
+                
+                // Google Apps Script는 리디렉션을 반환할 수 있어 catch로 잡힐 수 있음
+                // 실제로는 성공했을 수 있으므로, 사용자에게 알림
+                if (error.type === 'opaque' || error.message.includes('opaque')) {
+                     alert('보고가 성공적으로 전송되었습니다. (응답 확인 불가)');
+                     reportBtn.textContent = '📊 보고 완료 (Google Sheet)';
+                } else {
+                    alert('보고서 전송에 실패했습니다. (오류: ' + error.message + ')');
+                    reportBtn.textContent = '📊 Google Sheet으로 보고';
+                    reportBtn.disabled = false; // 실패 시 다시 활성화
+                }
+            });
+        }
+        // ▲▲▲ 새 함수 추가 ▲▲▲
 
 
         // --- 공통 임무 아코디언 로드 ---
