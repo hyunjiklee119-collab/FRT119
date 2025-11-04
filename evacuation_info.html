@@ -718,8 +718,8 @@
         }
 
         // ----------------------------------------
-        // ▼▼▼ 이 함수가 수정되었습니다 ▼▼▼
-        // --- Google Sheet 전송 함수 ---
+        // ▼▼▼ 이 함수가 수정되었습니다 (GET 방식) ▼▼▼
+        // --- Google Sheet 전송 함수 (GET 방식) ---
         function sendToGoogleSheet() {
             const popup = document.getElementById('info-popup');
             const area = popup.getAttribute('data-current-area');
@@ -732,11 +732,6 @@
             // ⚠️⚠️⚠️ 이 URL이 본인 것이 맞는지 마지막으로 확인하세요 ⚠️⚠️⚠️
             const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxYLEiZJrkUxBUNmqFEIhKqBBz-CHeQOla7PWl9DaafATQ-u280GApRAlY6QfEen4mC/exec"; 
 
-            /*
-            // [수정 1]
-            // WEB_APP_URL === "..." 를 확인하는 잘못된 if 문을 삭제했습니다.
-            */
-
             const reportBtn = document.getElementById('send-to-sheet-btn');
             reportBtn.textContent = '전송 중...';
             reportBtn.disabled = true;
@@ -745,30 +740,31 @@
             const summaryText = document.getElementById('popup-status-summary').textContent.trim();
             const memoText = document.getElementById('global-memo-input').value;
 
-            // 2. "불량(NG)" 항목 목록 수집
-            const ngItems = [];
+            // 2. "불량(NG)" 항목 목록 수집 (배열)
+            const ngItemsList = [];
             const items = popup.querySelectorAll('.checklist-item');
             items.forEach(item => {
                 if (item.getAttribute('data-status') === 'ng') {
-                    ngItems.push(item.querySelector('.item-name').textContent);
+                    ngItemsList.push(item.querySelector('.item-name').textContent);
                 }
             });
 
-            // 3. Apps Script로 보낼 데이터 객체(Payload) 생성
-            const payload = {
+            // 3. ⚠️ 핵심 수정: 데이터를 URL 파라미터로 변환
+            const params = {
                 area: area,
                 status: summaryText,
-                ngItems: ngItems, // 불량 항목 배열
+                ngItems: ngItemsList.join(','), // 배열을 쉼표로 구분된 문자열로 변경
                 memo: memoText
             };
 
-            // 4. fetch를 사용하여 Google Apps Script에 POST 요청 전송
-            fetch(WEB_APP_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload),
-               
-                // [수정 2]
-                // 'mode: no-cors' 옵션을 삭제했습니다.
+            // 4. ⚠️ 핵심 수정: URL 쿼리 문자열 생성 (한글 등 특수문자 인코딩)
+            const queryString = Object.keys(params)
+                .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+                .join('&');
+
+            // 5. ⚠️ 핵심 수정: fetch를 GET 방식으로 변경 (body, headers, mode 모두 제거)
+            fetch(`${WEB_APP_URL}?${queryString}`, {
+                method: 'GET'
             })
             .then(response => response.json())
             .then(data => {
@@ -781,15 +777,13 @@
                 }
             })
             .catch(error => {
-                // [수정 3]
-                // .catch 로직을 단순화했습니다.
                 console.error('Error sending report to Google Sheet:', error);
                 alert('보고서 전송에 실패했습니다. (오류: ' + error.message + ')\n\nApps Script가 올바르게 배포되었는지 확인하세요.');
                 reportBtn.textContent = '📊 Google Sheet으로 보고';
                 reportBtn.disabled = false; // 실패 시 다시 활성화
             });
         }
-        // ▲▲▲ 이 함수가 수정되었습니다 ▲▲▲
+        // ▲▲▲ 이 함수가 수정되었습니다 (GET 방식) ▲▲▲
         // ----------------------------------------
 
 
