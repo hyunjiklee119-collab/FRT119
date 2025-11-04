@@ -8,290 +8,79 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
-        /* 기본 레이아웃 및 폰트 설정 */
+        /* (CSS 스타일 코드는 이전과 동일합니다 - 생략되지 않음) */
         body { font-family: 'Noto Sans KR', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; line-height: 1.6; }
         .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
         h1 { color: #d9534f; font-size: 1.8em; text-align: center; margin-bottom: 20px; }
         .back-btn { display: inline-block; margin-bottom: 20px; color: #337ab7; text-decoration: none; font-weight: bold; }
-
-        /* 탭 메뉴 컨테이너 */
         .tab-container { display: flex; justify-content: space-around; background-color: #eee; border-radius: 8px; margin-bottom: 20px; overflow-x: auto; }
         .tab-btn { flex-grow: 1; text-align: center; padding: 15px 10px; border: none; background-color: transparent; font-weight: bold; color: #555; cursor: pointer; transition: background-color 0.2s, color 0.2s; white-space: nowrap; }
         .tab-btn.active { background-color: #337ab7; color: white; border-radius: 8px; }
-
-        /* 탭 콘텐츠 영역 */
         .tab-content { display: none; padding: 20px 0; }
         .tab-content.active { display: block; }
-
-        /* 구역 카드 스타일 */
         .area-card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin-bottom: 15px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .area-card:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); }
         .area-card h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.2em; color: #333; }
         .area-summary { font-size: 0.9em; color: #777; }
         .area-card.common-mission { background-color: #fff3f3; border-left: 5px solid #d9534f; cursor: default; }
         .area-card.common-mission h3 { color: #d9534f; }
-
-        /* 팝업 스타일 */
         .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 1000; }
-        .popup-content {
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            width: 95%;
-            max-width: 650px;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            max-height: 95vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+        .popup-content { background-color: #fff; padding: 25px; border-radius: 10px; width: 95%; max-width: 650px; position: relative; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); max-height: 95vh; overflow: hidden; display: flex; flex-direction: column; }
         .popup-close { position: absolute; top: 10px; right: 15px; font-size: 1.5em; color: #aaa; cursor: pointer; z-index: 20; }
-        .popup-close:hover { color: #333; }
-
-        /* 캡처 대상 컨테이너 */
-        #capture-target {
-            background-color: #fff;
-            border-radius: 5px;
-            margin-top: 5px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            min-height: 0;
-            margin: -25px;
-            padding: 0;
-        }
-
-        /* 상단 고정 헤더 컨테이너 */
-        .fixed-header-container {
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
-            padding: 25px 25px 20px 25px;
-            z-index: 10;
-        }
-
-        /* 팝업 제목 및 버튼 영역 */
+        #capture-target { background-color: #fff; border-radius: 5px; margin-top: 5px; display: flex; flex-direction: column; height: 100%; min-height: 0; margin: -25px; padding: 0; }
+        .fixed-header-container { background-color: #fff; border-bottom: 1px solid #ddd; padding: 25px 25px 20px 25px; z-index: 10; }
         .popup-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .popup-title-group { display: flex; align-items: center; }
         .popup-title { font-size: 1.3em; color: #d9534f; margin: 0; }
-        #back-to-list-btn {
-            background-color: #eee; color: #555; border: none; padding: 5px 10px;
-            border-radius: 5px; font-size: 0.85em; cursor: pointer; margin-right: 15px;
-            font-weight: bold; transition: background-color 0.2s;
-        }
+        #back-to-list-btn { background-color: #eee; color: #555; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.85em; cursor: pointer; margin-right: 15px; font-weight: bold; transition: background-color 0.2s; }
         #back-to-list-btn:hover { background-color: #ddd; }
-
-        /* 일괄 체크 버튼 스타일 (개선) */
-        #bulk-check-area {
-            display: flex;
-            justify-content: flex-start;
-            gap: 5px;
-            margin-top: 15px;
-            align-items: center; /* 세로 중앙 정렬 */
-            flex-wrap: wrap;
-        }
-        #bulk-check-area .bulk-check-btn {
-            padding: 8px 10px; /* 크기 축소 */
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 0.8em; /* 글자 크기 축소 */
-            white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-        }
+        #bulk-check-area { display: flex; justify-content: flex-start; gap: 5px; margin-top: 15px; align-items: center; flex-wrap: wrap; }
+        #bulk-check-area .bulk-check-btn { padding: 8px 10px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.2s; font-size: 0.8em; white-space: nowrap; }
         #check-all-btn { background-color: #5cb85c; color: white; }
         #check-all-btn:hover { background-color: #4cae4c; }
         #uncheck-all-btn { background-color: #f0ad4e; color: white; }
         #uncheck-all-btn:hover { background-color: #eb9316; }
-
-        /* 요약 정보 스타일 */
-        #popup-status-summary {
-            font-size: 1em;
-            font-weight: bold;
-            color: #555;
-            margin-left: 10px;
-            white-space: nowrap;
-        }
+        #popup-status-summary { font-size: 1em; font-weight: bold; color: #555; margin-left: 10px; white-space: nowrap; }
         #popup-status-summary .ok { color: #5cb85c; }
         #popup-status-summary .ng { color: #d9534f; }
         #popup-status-summary .na { color: #777; }
-
-        /* 스크롤 가능한 본문 영역 */
-        #popup-scroll-content {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 0 25px;
-            padding-bottom: 25px;
-        }
-
-        /* 상세 체크리스트 스타일 */
-        .checklist-wrapper {
-            margin-top: 0;
-            padding-bottom: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0 20px;
-        }
-        /* 2열 배열 스타일 (7개 초과) */
-        .checklist-wrapper.multi-column-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0 20px;
-        }
-        /* 3열 배열 스타일 (14개 초과) */
-        .checklist-wrapper.multi-column-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 0 15px;
-        }
-
-        /* 지원조 임무 텍스트 스타일 */
-        #popup-detail-list p {
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-        /* 지원조 임무 텍스트 내부 간격 확보 */
-        #popup-detail-list strong {
-            display: block;
-            margin-top: 10px;
-        }
-
-        /* 체크리스트 아이템 스타일 */
-        .checklist-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-            padding: 8px 0; /* 패딩 축소 */
-            font-size: 0.9em; /* 글자 크기 축소 */
-            cursor: pointer;
-            width: 100%;
-        }
+        #popup-scroll-content { flex-grow: 1; overflow-y: auto; padding: 0 25px; padding-bottom: 25px; }
+        .checklist-wrapper { margin-top: 0; padding-bottom: 15px; display: flex; flex-wrap: wrap; gap: 0 20px; }
+        .checklist-wrapper.multi-column-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+        .checklist-wrapper.multi-column-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 15px; }
+        #popup-detail-list p { margin-top: 0; margin-bottom: 15px; }
+        #popup-detail-list strong { display: block; margin-top: 10px; }
+        .checklist-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 8px 0; font-size: 0.9em; cursor: pointer; width: 100%; }
         .checklist-wrapper.multi-column-2 .checklist-item,
-        .checklist-wrapper.multi-column-3 .checklist-item {
-            width: auto;
-        }
-
-        /* 상태 선택 버튼 컨테이너 */
-        .status-options {
-            display: flex;
-            gap: 5px;
-            flex-shrink: 0;
-            margin-left: 10px;
-        }
-
-        /* 상태 버튼 스타일 */
-        .status-btn {
-            padding: 5px 8px; /* 크기 축소 */
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f0f0f0;
-            font-size: 0.75em; /* 글자 크기 축소 */
-            cursor: pointer;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
-        .status-btn.selected {
-            color: white;
-            border-color: transparent;
-        }
-
-        /* 상태별 색상 */
+        .checklist-wrapper.multi-column-3 .checklist-item { width: auto; }
+        .status-options { display: flex; gap: 5px; flex-shrink: 0; margin-left: 10px; }
+        .status-btn { padding: 5px 8px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; font-size: 0.75em; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; }
+        .status-btn.selected { color: white; border-color: transparent; }
         .status-btn[data-status="ok"].selected { background-color: #5cb85c; }
         .status-btn[data-status="ng"].selected { background-color: #d9534f; }
         .status-btn[data-status="na"].selected { background-color: #777; }
-
-        /* 상태에 따른 텍스트 색상 변경 */
-        .checklist-item[data-status="ng"] .item-name {
-            color: #d9534f;
-            font-weight: bold;
-        }
-        .checklist-item[data-status="na"] .item-name {
-            color: #aaa;
-            text-decoration: line-through;
-        }
-
-        .item-name {
-            font-weight: 500;
-            color: #333;
-            flex-grow: 1;
-            line-height: 1.2;
-            margin-right: 10px;
-        }
-
-        /* 특이사항 입력 필드 컨테이너 */
-        #memo-input-container {
-            border-top: 1px solid #ddd;
-            padding-top: 15px;
-            margin-top: 10px;
-        }
-
-        /* 특이사항 입력 필드 (최대 크기 확보) */
-        #global-memo-input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 0.95em;
-            height: 120px;
-            resize: vertical;
-        }
-
-        /* 다운로드 버튼 스타일 */
-        .popup-action-btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        #download-btn, #send-sms-btn, #send-to-sheet-btn { /* 새 버튼 ID 추가 */
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            box-sizing: border-box; /* 패딩 포함 크기 계산 */
-        }
+        .checklist-item[data-status="ng"] .item-name { color: #d9534f; font-weight: bold; }
+        .checklist-item[data-status="na"] .item-name { color: #aaa; text-decoration: line-through; }
+        .item-name { font-weight: 500; color: #333; flex-grow: 1; line-height: 1.2; margin-right: 10px; }
+        #memo-input-container { border-top: 1px solid #ddd; padding-top: 15px; margin-top: 10px; }
+        #global-memo-input { width: 100%; padding: 10px; margin-top: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.95em; height: 120px; resize: vertical; }
+        .popup-action-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        #download-btn, #send-sms-btn, #send-to-sheet-btn { width: 100%; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.2s; box-sizing: border-box; }
         #download-btn { background-color: #337ab7; color: white; }
         #download-btn:hover { background-color: #286090; }
         #send-sms-btn { background-color: #f0ad4e; color: white; }
         #send-sms-btn:hover { background-color: #eb9316; }
-
-        /* ▼▼▼ 새 버튼 스타일 추가 ▼▼▼ */
-        #send-to-sheet-btn {
-            background-color: #5cb85c; /* 녹색 계열 */
-            color: white;
-        }
-        #send-to-sheet-btn:hover {
-            background-color: #4cae4c;
-        }
-        #send-to-sheet-btn:disabled { /* 비활성화 스타일 */
-            background-color: #aaa;
-            cursor: not-allowed;
-        }
-        /* ▲▲▲ 새 버튼 스타일 추가 ▲▲▲ */
-
-
-        /* 공통 임무 아코디언 스타일 */
+        #send-to-sheet-btn { background-color: #5cb85c; color: white; }
+        #send-to-sheet-btn:hover { background-color: #4cae4c; }
+        #send-to-sheet-btn:disabled { background-color: #aaa; cursor: not-allowed; }
         .sub-accordion-item { border: 1px solid #ddd; margin-top: 10px; border-radius: 5px; overflow: hidden; }
         .sub-accordion-header { background-color: #f7f7f7; padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #ddd; }
         .sub-accordion-content { padding: 0 15px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background-color: #fff; }
         .sub-accordion-content.active { max-height: 500px; padding: 15px; }
-
-
-        /* 모바일 최적화 (550px 이하) */
         @media (max-width: 550px) {
             .checklist-wrapper.multi-column-2,
-            .checklist-wrapper.multi-column-3 {
-                grid-template-columns: 1fr;
-            }
-            .checklist-wrapper.multi-column-3 .item-name {
-                font-size: 1em; /* 모바일에서는 다시 원래 크기로 */
-            }
+            .checklist-wrapper.multi-column-3 { grid-template-columns: 1fr; }
+            .checklist-wrapper.multi-column-3 .item-name { font-size: 1em; }
             .popup-content { padding: 15px; max-width: 95%; }
             .fixed-header-container { padding: 15px 15px 15px 15px; }
             #popup-scroll-content { padding: 0 15px; padding-bottom: 15px; }
@@ -423,8 +212,30 @@
 
         // ▼▼▼ Google Apps Script 웹 앱 URL ▼▼▼
         // (이전 대화에서 제공한 URL을 그대로 유지했습니다)
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbweb8UiszSHQy8sVCzmfv1TktKE5s-hz40zhRZc5uQojGczun5Y70za5FPkmKblOcmL/exec"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxYLEiZJrkUxBUNmqFEIhKqBBz-CHeQOla7PWl9DaafATQ-u280GApRAlY6QfEen4mC/exec"; 
         // ▲▲▲ Google Apps Script 웹 앱 URL ▲▲▲
+
+
+        // ----------------------------------------
+        // ▼▼▼ B. 이 함수가 새로 추가되었습니다 ▼▼▼
+        // --- Google Apps Script (JSONP) 응답 처리용 콜백 함수 ---
+        function handleGasResponse(data) {
+            const reportBtn = document.getElementById('send-to-sheet-btn');
+            
+            // Apps Script가 반환한 'result' 값을 확인
+            if (data.result === 'success') {
+                alert('보고가 성공적으로 전송되었습니다.');
+                reportBtn.textContent = '📊 보고 완료 (Google Sheet)';
+                // 성공 시 비활성화 유지 (중복 전송 방지)
+            } else {
+                // Apps Script의 'catch' 블록이 실행된 경우
+                alert('보고서 전송에 실패했습니다. (오류: ' + data.message + ')');
+                reportBtn.textContent = '📊 Google Sheet으로 보고';
+                reportBtn.disabled = false; // 실패 시 다시 활성화
+            }
+        }
+        // ▲▲▲ B. 이 함수가 새로 추가되었습니다 ▲▲▲
+        // ----------------------------------------
 
 
         // --- LocalStorage 상태 관리 함수 ---
@@ -456,7 +267,7 @@
             const popupDetailList = document.getElementById('popup-scroll-content').querySelector('#popup-detail-list');
             const downloadBtn = document.getElementById('download-btn');
             const sendSmsBtn = document.getElementById('send-sms-btn');
-            const sendToSheetBtn = document.getElementById('send-to-sheet-btn'); // ◀◀◀ 새 버튼 변수
+            const sendToSheetBtn = document.getElementById('send-to-sheet-btn'); 
             const backBtn = document.getElementById('back-to-list-btn');
             const bulkCheckArea = document.getElementById('bulk-check-area');
             
@@ -477,9 +288,9 @@
                 backBtn.style.display = 'inline-block';
                 downloadBtn.style.display = 'block';
                 sendSmsBtn.style.display = 'block';
-                sendToSheetBtn.style.display = 'block'; // ◀◀◀ 새 버튼 보이기
-                sendToSheetBtn.textContent = '📊 Google Sheet으로 보고'; // ◀◀◀ 버튼 초기화
-                sendToSheetBtn.disabled = false; // ◀◀◀ 버튼 초기화
+                sendToSheetBtn.style.display = 'block'; 
+                sendToSheetBtn.textContent = '📊 Google Sheet으로 보고'; 
+                sendToSheetBtn.disabled = false; 
 
                 memoContainer.style.display = 'block';
                 bulkCheckArea.style.display = 'flex';
@@ -541,7 +352,7 @@
             } else if (typeof data === 'string') {
                 downloadBtn.style.display = 'none';
                 sendSmsBtn.style.display = 'none';
-                sendToSheetBtn.style.display = 'none'; // ◀◀◀ 새 버튼 숨기기
+                sendToSheetBtn.style.display = 'none'; 
                 bulkCheckArea.style.display = 'none';
                 popupDetailList.innerHTML = `<p>${data}</p>`;
                 backBtn.style.display = 'inline-block';
@@ -640,7 +451,7 @@
             const scrollContent = document.getElementById('popup-scroll-content');
             const downloadBtn = document.getElementById('download-btn');
             const sendSmsBtn = document.getElementById('send-sms-btn');
-            const sendToSheetBtn = document.getElementById('send-to-sheet-btn'); // ◀◀◀
+            const sendToSheetBtn = document.getElementById('send-to-sheet-btn'); 
             const popupStatusSummary = document.getElementById('popup-status-summary');
 
             if(fixedHeader) fixedHeader.style.position = 'static';
@@ -648,14 +459,14 @@
             const originalBulkCheckDisplay = bulkCheckArea.style.display;
             const originalDownloadBtnDisplay = downloadBtn.style.display;
             const originalSendSmsBtnDisplay = sendSmsBtn.style.display;
-            const originalSendToSheetBtnDisplay = sendToSheetBtn.style.display; // ◀◀◀
+            const originalSendToSheetBtnDisplay = sendToSheetBtn.style.display; 
             
             backBtn.style.display = 'none';
             bulkCheckArea.style.display = 'none';
             downloadBtn.style.display = 'none';
             sendSmsBtn.style.display = 'none';
-            sendToSheetBtn.style.display = 'none'; // ◀◀◀
-            if(popupStatusSummary) popupStatusSummary.style.display = 'inline-block'; // 캡처 시 표시
+            sendToSheetBtn.style.display = 'none'; 
+            if(popupStatusSummary) popupStatusSummary.style.display = 'inline-block'; 
 
             const originalMaxHeight = scrollContent.style.maxHeight;
             const originalOverflow = scrollContent.style.overflowY;
@@ -673,7 +484,7 @@
                 bulkCheckArea.style.display = originalBulkCheckDisplay;
                 downloadBtn.style.display = originalDownloadBtnDisplay;
                 sendSmsBtn.style.display = originalSendSmsBtnDisplay;
-                sendToSheetBtn.style.display = originalSendToSheetBtnDisplay; // ◀◀◀
+                sendToSheetBtn.style.display = originalSendToSheetBtnDisplay; 
                 scrollContent.style.maxHeight = originalMaxHeight;
                 scrollContent.style.overflowY = originalOverflow;
                 if(popupStatusSummary) popupStatusSummary.style.display = 'inline-block';
@@ -718,8 +529,8 @@
         }
 
         // ----------------------------------------
-        // ▼▼▼ 이 함수가 수정되었습니다 (GET 방식) ▼▼▼
-        // --- Google Sheet 전송 함수 (GET 방식) ---
+        // ▼▼▼ A. 이 함수가 수정되었습니다 (JSONP 방식) ▼▼▼
+        // --- Google Sheet 전송 함수 (JSONP 방식) ---
         function sendToGoogleSheet() {
             const popup = document.getElementById('info-popup');
             const area = popup.getAttribute('data-current-area');
@@ -730,7 +541,7 @@
             }
 
             // ⚠️⚠️⚠️ 이 URL이 본인 것이 맞는지 마지막으로 확인하세요 ⚠️⚠️⚠️
-            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbweb8UiszSHQy8sVCzmfv1TktKE5s-hz40zhRZc5uQojGczun5Y70za5FPkmKblOcmL/exec"; 
+            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxYLEiZJrkUxBUNmqFEIhKqBBz-CHeQOla7PWl9DaafATQ-u280GApRAlY6QfEen4mC/exec"; 
 
             const reportBtn = document.getElementById('send-to-sheet-btn');
             reportBtn.textContent = '전송 중...';
@@ -749,41 +560,41 @@
                 }
             });
 
-            // 3. ⚠️ 핵심 수정: 데이터를 URL 파라미터로 변환
+            // 3. ⚠️ 핵심 수정: 데이터를 URL 파라미터로 변환 + 'callback' 추가
             const params = {
                 area: area,
                 status: summaryText,
                 ngItems: ngItemsList.join(','), // 배열을 쉼표로 구분된 문자열로 변경
-                memo: memoText
+                memo: memoText,
+                callback: 'handleGasResponse' // ⚠️ GAS가 호출할 함수 이름을 지정
             };
 
-            // 4. ⚠️ 핵심 수정: URL 쿼리 문자열 생성 (한글 등 특수문자 인코딩)
+            // 4. URL 쿼리 문자열 생성 (한글 등 특수문자 인코딩)
             const queryString = Object.keys(params)
                 .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
                 .join('&');
 
-            // 5. ⚠️ 핵심 수정: fetch를 GET 방식으로 변경 (body, headers, mode 모두 제거)
-            fetch(`${WEB_APP_URL}?${queryString}`, {
-                method: 'GET'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-                    alert('보고가 성공적으로 전송되었습니다.');
-                    reportBtn.textContent = '📊 보고 완료 (Google Sheet)';
-                    // 성공 후 비활성화 유지 (중복 전송 방지)
-                } else {
-                    throw new Error(data.message || '알 수 없는 오류');
-                }
-            })
-            .catch(error => {
-                console.error('Error sending report to Google Sheet:', error);
-                alert('보고서 전송에 실패했습니다. (오류: ' + error.message + ')\n\nApps Script가 올바르게 배포되었는지 확인하세요.');
+            // 5. ⚠️ 핵심 수정: <script> 태그를 동적으로 생성하여 삽입
+            const script = document.createElement('script');
+            script.src = `${WEB_APP_URL}?${queryString}`;
+            
+            // 6. 스크립트 로드 완료/실패 시 태그 제거 (정리)
+            script.onload = () => {
+                // 성공 시 'handleGasResponse' 함수가 자동으로 호출됨
+                document.head.removeChild(script);
+            };
+            script.onerror = () => {
+                // URL 자체가 잘못되었거나 네트워크 오류 시
+                alert('스크립트 로드 실패. Apps Script URL 또는 네트워크를 확인하세요.');
                 reportBtn.textContent = '📊 Google Sheet으로 보고';
-                reportBtn.disabled = false; // 실패 시 다시 활성화
-            });
+                reportBtn.disabled = false;
+                document.head.removeChild(script);
+            };
+
+            // 7. 스크립트 태그를 <head>에 삽입하여 요청 시작
+            document.head.appendChild(script);
         }
-        // ▲▲▲ 이 함수가 수정되었습니다 (GET 방식) ▲▲▲
+        // ▲▲▲ A. 이 함수가 수정되었습니다 (JSONP 방식) ▲▲▲
         // ----------------------------------------
 
 
