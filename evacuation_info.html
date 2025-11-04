@@ -560,11 +560,12 @@
             // 1. 특이사항 메모 수집
             const memoText = document.getElementById('global-memo-input').value;
 
-            // 2. ⚠️ (수정됨) OK, NG, NA 카운트 및 NG 항목 수집
+            // 2. ⚠️ (수정됨) OK, NG, NA 카운트 및 NG/NA 항목 수집
             let okCount = 0;
             let ngCount = 0;
             let naCount = 0;
             const ngItemsList = []; // List of names for 'NG' items
+            const naItemsList = []; // ◀◀◀ (신규) List of names for 'NA' items
             
             const items = popup.querySelectorAll('.checklist-item');
             items.forEach(item => {
@@ -577,16 +578,18 @@
                     ngItemsList.push(item.querySelector('.item-name').textContent); // NG 항목 이름 수집
                 } else if (statusRaw === 'na') {
                     naCount++;
+                    naItemsList.push(item.querySelector('.item-name').textContent); // ◀◀◀ (신규) NA 항목 이름 수집
                 }
             });
 
-            // 3. ⚠️ (수정됨) 데이터를 URL 파라미터로 변환 + 'callback' 추가
+            // 3. ⚠️ (수정됨) 데이터를 URL 파라미터로 변환 + 'naItems' 추가
             const params = {
                 area: area,
                 ok: okCount,
                 ng: ngCount,
                 na: naCount,
                 ngItems: ngItemsList.join(','), // 쉼표로 구분된 NG 항목 문자열
+                naItems: naItemsList.join(','), // ◀◀◀ (신규) 쉼표로 구분된 NA 항목 문자열
                 memo: memoText,
                 callback: 'handleGasResponse' // ⚠️ GAS가 호출할 함수 이름을 지정
             };
