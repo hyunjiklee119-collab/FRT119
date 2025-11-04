@@ -529,7 +529,7 @@
         }
 
         // ----------------------------------------
-        // ▼▼▼ A. 이 함수가 수정되었습니다 (JSONP 방식) ▼▼▼
+        // ▼▼▼ A. 이 함수가 JSONP 방식으로 수정되었습니다 ▼▼▼
         // --- Google Sheet 전송 함수 (JSONP 방식) ---
         function sendToGoogleSheet() {
             const popup = document.getElementById('info-popup');
@@ -548,23 +548,35 @@
             reportBtn.disabled = true;
 
             // 1. 보고할 데이터 수집
-            const summaryText = document.getElementById('popup-status-summary').textContent.trim();
             const memoText = document.getElementById('global-memo-input').value;
 
-            // 2. "불량(NG)" 항목 목록 수집 (배열)
-            const ngItemsList = [];
+            // 2. ⚠️ (수정됨) OK, NG, NA 카운트 및 NG 항목 수집
+            let okCount = 0;
+            let ngCount = 0;
+            let naCount = 0;
+            const ngItemsList = []; // List of names for 'NG' items
+            
             const items = popup.querySelectorAll('.checklist-item');
             items.forEach(item => {
-                if (item.getAttribute('data-status') === 'ng') {
-                    ngItemsList.push(item.querySelector('.item-name').textContent);
+                const statusRaw = item.getAttribute('data-status');
+                
+                if (statusRaw === 'ok') {
+                    okCount++;
+                } else if (statusRaw === 'ng') {
+                    ngCount++;
+                    ngItemsList.push(item.querySelector('.item-name').textContent); // NG 항목 이름 수집
+                } else if (statusRaw === 'na') {
+                    naCount++;
                 }
             });
 
-            // 3. ⚠️ 핵심 수정: 데이터를 URL 파라미터로 변환 + 'callback' 추가
+            // 3. ⚠️ (수정됨) 데이터를 URL 파라미터로 변환 + 'callback' 추가
             const params = {
                 area: area,
-                status: summaryText,
-                ngItems: ngItemsList.join(','), // 배열을 쉼표로 구분된 문자열로 변경
+                ok: okCount,
+                ng: ngCount,
+                na: naCount,
+                ngItems: ngItemsList.join(','), // 쉼표로 구분된 NG 항목 문자열
                 memo: memoText,
                 callback: 'handleGasResponse' // ⚠️ GAS가 호출할 함수 이름을 지정
             };
@@ -594,7 +606,7 @@
             // 7. 스크립트 태그를 <head>에 삽입하여 요청 시작
             document.head.appendChild(script);
         }
-        // ▲▲▲ A. 이 함수가 수정되었습니다 (JSONP 방식) ▲▲▲
+        // ▲▲▲ A. 이 함수가 JSONP 방식으로 수정되었습니다 ▲▲▲
         // ----------------------------------------
 
 
