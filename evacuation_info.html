@@ -422,7 +422,7 @@
         };
 
         // ▼▼▼ Google Apps Script 웹 앱 URL ▼▼▼
-        // ⚠️⚠️⚠️ 본인의 웹 앱 URL로 반드시 교체하세요! ⚠️⚠️⚠️
+        // (이전 대화에서 제공한 URL을 그대로 유지했습니다)
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwJ1RE8qmO9uWkyV33OW0Vw-WT0zNvaSuCLrQwHIOQOjl9xsGbbZO_-TY1QMZL99CS1/exec"; 
         // ▲▲▲ Google Apps Script 웹 앱 URL ▲▲▲
 
@@ -717,7 +717,8 @@
             }
         }
 
-        // ▼▼▼ 새 함수 추가 ▼▼▼
+        // ----------------------------------------
+        // ▼▼▼ 이 함수가 수정되었습니다 ▼▼▼
         // --- Google Sheet 전송 함수 ---
         function sendToGoogleSheet() {
             const popup = document.getElementById('info-popup');
@@ -728,11 +729,13 @@
                 return;
             }
 
-            // URL이 placeholder인지 확인
-            if (WEB_APP_URL === "https://script.google.com/macros/s/AKfycbwJ1RE8qmO9uWkyV33OW0Vw-WT0zNvaSuCLrQwHIOQOjl9xsGbbZO_-TY1QMZL99CS1/exec") {
-                alert("오류: 웹 앱 URL이 설정되지 않았습니다. 스크립트에서 WEB_APP_URL을 확인하세요.");
-                return;
-            }
+            // ⚠️⚠️⚠️ 이 URL이 본인 것이 맞는지 마지막으로 확인하세요 ⚠️⚠️⚠️
+            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwJ1RE8qmO9uWkyV33OW0Vw-WT0zNvaSuCLrQwHIOQOjl9xsGbbZO_-TY1QMZL99CS1/exec"; 
+
+            /*
+            // [수정 1]
+            // WEB_APP_URL === "..." 를 확인하는 잘못된 if 문을 삭제했습니다.
+            */
 
             const reportBtn = document.getElementById('send-to-sheet-btn');
             reportBtn.textContent = '전송 중...';
@@ -763,8 +766,11 @@
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload),
-                mode: 'no-cors' // Google Apps Script에 보낼 때는 no-cors 모드 비활성화 (CORS 필요)
-                                // -> Google Apps Script 응답에 맞게 수정
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                // [수정 2]
+                // 'mode: no-cors' 옵션을 삭제했습니다.
             })
             .then(response => response.json())
             .then(data => {
@@ -777,21 +783,16 @@
                 }
             })
             .catch(error => {
+                // [수정 3]
+                // .catch 로직을 단순화했습니다.
                 console.error('Error sending report to Google Sheet:', error);
-                
-                // Google Apps Script는 리디렉션을 반환할 수 있어 catch로 잡힐 수 있음
-                // 실제로는 성공했을 수 있으므로, 사용자에게 알림
-                if (error.type === 'opaque' || error.message.includes('opaque')) {
-                     alert('보고가 성공적으로 전송되었습니다. (응답 확인 불가)');
-                     reportBtn.textContent = '📊 보고 완료 (Google Sheet)';
-                } else {
-                    alert('보고서 전송에 실패했습니다. (오류: ' + error.message + ')');
-                    reportBtn.textContent = '📊 Google Sheet으로 보고';
-                    reportBtn.disabled = false; // 실패 시 다시 활성화
-                }
+                alert('보고서 전송에 실패했습니다. (오류: ' + error.message + ')\n\nApps Script가 올바르게 배포되었는지 확인하세요.');
+                reportBtn.textContent = '📊 Google Sheet으로 보고';
+                reportBtn.disabled = false; // 실패 시 다시 활성화
             });
         }
-        // ▲▲▲ 새 함수 추가 ▲▲▲
+        // ▲▲▲ 이 함수가 수정되었습니다 ▲▲▲
+        // ----------------------------------------
 
 
         // --- 공통 임무 아코디언 로드 ---
