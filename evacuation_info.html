@@ -226,7 +226,7 @@
             if (data.result === 'success') {
                 alert('보고가 성공적으로 전송되었습니다.');
                 reportBtn.textContent = '📊 보고 완료 (Google Sheet)';
-                // 성공 시 비활성화 유지 (중복 전송 방지)
+                // 성공 후 비활성화 유지 (중복 전송 방지)
             } else {
                 // Apps Script의 'catch' 블록이 실행된 경우
                 alert('보고서 전송에 실패했습니다. (오류: ' + data.message + ')');
