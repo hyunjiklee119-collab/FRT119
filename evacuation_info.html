@@ -508,17 +508,27 @@
                 return;
             }
 
-            const summaryElement = document.getElementById('popup-status-summary');
-            const memoInput = document.getElementById('global-memo-input');
+            // ⚠️ (수정됨) OK, NG, NA 카운트 및 NG 항목 수집
+            let okCount = 0;
+            let ngCount = 0;
+            let naCount = 0;
+            
+            const items = popup.querySelectorAll('.checklist-item');
+            items.forEach(item => {
+                const statusRaw = item.getAttribute('data-status');
+                if (statusRaw === 'ok') okCount++;
+                else if (statusRaw === 'ng') ngCount++;
+                else if (statusRaw === 'na') naCount++;
+            });
 
-            const summaryText = summaryElement.textContent.trim();
+            // ⚠️ (수정됨) 요약 텍스트를 카운트로 생성
+            const summaryText = `양호: ${okCount}, 불량: ${ngCount}, NA: ${naCount}`;
+            const memoInput = document.getElementById('global-memo-input');
             const memoText = memoInput.value ? `\n\n[특이사항]\n${memoInput.value}` : '';
             
             const message = `[피난유도팀 - ${area} 보고]\n\n[진행 현황]\n${summaryText}${memoText}`;
             
-            // 전송 번호를 '나'로 지정 (010-0000-0000 예시)
             const recipientNumber = '010-9466-9082'; // ⚠️ 여기에 실제 수신 번호를 입력하세요
-            
             const smsUri = `sms:${recipientNumber}?body=${encodeURIComponent(message)}`;
             
             if (/Mobi|Android/i.test(navigator.userAgent)) {
@@ -529,7 +539,7 @@
         }
 
         // ----------------------------------------
-        // ▼▼▼ A. 이 함수가 JSONP 방식으로 수정되었습니다 ▼▼▼
+        // ▼▼▼ A. 이 함수가 JSONP 방식으로 (개별 카운트) 수정되었습니다 ▼▼▼
         // --- Google Sheet 전송 함수 (JSONP 방식) ---
         function sendToGoogleSheet() {
             const popup = document.getElementById('info-popup');
@@ -547,7 +557,7 @@
             reportBtn.textContent = '전송 중...';
             reportBtn.disabled = true;
 
-            // 1. 보고할 데이터 수집
+            // 1. 특이사항 메모 수집
             const memoText = document.getElementById('global-memo-input').value;
 
             // 2. ⚠️ (수정됨) OK, NG, NA 카운트 및 NG 항목 수집
@@ -606,7 +616,7 @@
             // 7. 스크립트 태그를 <head>에 삽입하여 요청 시작
             document.head.appendChild(script);
         }
-        // ▲▲▲ A. 이 함수가 JSONP 방식으로 수정되었습니다 ▲▲▲
+        // ▲▲▲ A. 이 함수가 JSONP 방식으로 (개별 카운트) 수정되었습니다 ▲▲▲
         // ----------------------------------------
 
 
