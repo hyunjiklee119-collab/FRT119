@@ -298,6 +298,7 @@
     </style>
 </head>
 <body>
+    <!-- ... (HTML 구조는 변경 없음) ... -->
     <div class="container">
         <header>
             <div class="logo-container">
@@ -350,12 +351,27 @@
         <h3>비상 연락 조직</h3>
         <div class="contact-list">
             <ul>
+                <!-- 연락처 목록이 여기에 동적으로 추가됩니다 -->
             </ul>
         </div>
     </div>
     
+    <!-- =============================================================== -->
+    <!-- ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ -->
+    <!-- 이 부분의 스크립트가 수정되었습니다. (roster.html fetch -> JSONP) -->
+    <!-- =============================================================== -->
     <script>
-        let rosterData = [];
+        // -----------------------------------------------------------------
+        // ◀ [중요] 수정된 스크립트 
+        // -----------------------------------------------------------------
+        
+        // 1. 본인의 구글 앱스 스크립트 '배포 URL'을 여기에 입력하세요.
+        //    (반드시 'https://script.google.com/...'로 시작하는 URL)
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzPfJvCXNSCXGg0KBCFdD0qsJfiI8LC5g6aZctDD3e3zxWojug0krC4YD_jKu3CZmn5/exec"; // ◀ ★★★★★ 이 부분을 수정하세요 ★★★★★
+
+        let rosterData = []; // 전역 변수로 명단 데이터 저장
+
+        // --- 팝업 관련 함수 (기존과 동일) ---
         function showPopup() {
             document.getElementById('contactPopup').style.display = 'block';
             document.getElementById('contactPopupOverlay').style.display = 'block';
@@ -364,46 +380,73 @@
             document.getElementById('contactPopup').style.display = 'none';
             document.getElementById('contactPopupOverlay').style.display = 'none';
         }
+
+        // --- 페이지 로드 시 데이터 가져오기 (JSONP로 변경) ---
         document.addEventListener('DOMContentLoaded', () => {
+            if (WEB_APP_URL === "YOUR_WEB_APP_URL_GOES_HERE" || !WEB_APP_URL) {
+                alert("HTML 파일 하단 <script> 태그의 WEB_APP_URL 변수에 본인의 구글 앱스 스크립트 배포 URL을 입력해주세요.");
+                console.error("WEB_APP_URL이 설정되지 않았습니다.");
+                return;
+            }
+
+            // 로딩 표시 (선택 사항)
+            document.querySelector('.contact-list ul').innerHTML = '<li>명단 로딩 중...</li>';
+
+            // JSONP 콜백 함수 이름 동적 생성
+            const callbackName = 'jsonp_callback_' + Math.floor(Math.random() * 100000);
+
+            // 2. 콜백 함수를 window 전역 객체에 정의
+            //    (GAS에서 이 함수를 호출할 것입니다)
+            window[callbackName] = function(response) {
+                console.log("Google Apps Script 응답:", response);
+
+                if (response.result === 'success' && response.data) {
+                    // 3. rosterData를 전역 변수에 저장
+                    rosterData = response.data;
+                    
+                    // 4. 기존 로직 실행
+                    populateDropdowns();
+                    populateContactList();
+                } else {
+                    console.error('Error loading the roster:', response.message);
+                    alert('명단을 불러오는 데 실패했습니다: ' + (response.message || '알 수 없는 오류'));
+                    document.querySelector('.contact-list ul').innerHTML = '<li>명단 로드 실패</li>';
+                }
+
+                // 5. 로드가 완료되면 스크립트 태그와 콜백 함수 정리
+                document.body.removeChild(script);
+                delete window[callbackName];
+            };
+
+            // 6. 스크립트 태그를 동적으로 생성하여 JSONP 요청
+            const script = document.createElement('script');
+            // 'action=readRoster' 파라미터를 사용
+            script.src = `${WEB_APP_URL}?action=readRoster&callback=${callbackName}`;
+            
+            // 7. 스크립트 태그를 body에 추가하여 요청 시작
+            document.body.appendChild(script);
+        });
+
+        // --- 드롭다운 채우는 함수 (기존 로직 분리) ---
+        function populateDropdowns() {
             const departmentSelect = document.getElementById('departmentSelect');
             const nameSelect = document.getElementById('nameSelect');
             const roleDisplay = document.getElementById('roleDisplay');
-            const contactList = document.querySelector('.contact-list ul');
-            fetch('roster.html')
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    rosterData = Array.from(doc.getElementById('roster-data').children).map(person => ({
-                        department: person.getAttribute('data-department'),
-                        name: person.getAttribute('data-name'),
-                        role: person.getAttribute('data-role'),
-                        phone: person.getAttribute('data-phone')
-                    }));
-                    const departments = [...new Set(rosterData.map(p => p.department))].sort();
-                    departments.forEach(dept => {
-                        const option = document.createElement('option');
-                        option.value = dept;
-                        option.textContent = dept;
-                        departmentSelect.appendChild(option);
-                    });
-                    rosterData.forEach(person => {
-                        const listItem = document.createElement('li');
-                        listItem.innerHTML = `
-                            <div>
-                                <span class="contact-name">${person.name}</span>
-                                <br>
-                                <span class="contact-role">${person.department} - ${person.role}</span>
-                            </div>
-                            <a href="tel:${person.phone}" class="contact-phone">📞 전화</a>
-                        `;
-                        contactList.appendChild(listItem);
-                    });
-                })
-                .catch(error => console.error('Error loading the roster:', error));
+
+            // 부서 목록 채우기
+            const departments = [...new Set(rosterData.map(p => p.department))].sort();
+            departments.forEach(dept => {
+                if (!dept) return; // 빈 부서명은 건너뜀
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                departmentSelect.appendChild(option);
+            });
+
+            // --- 이벤트 리스너 (기존과 동일) ---
             departmentSelect.addEventListener('change', () => {
                 const selectedDept = departmentSelect.value;
-                nameSelect.innerHTML = '<option value="">이름 선택</option>';
+                nameSelect.innerHTML = '<option value="">이름 선택</option>'; // 리셋
                 nameSelect.disabled = true;
                 roleDisplay.value = '';
                 if (selectedDept) {
@@ -417,6 +460,7 @@
                     nameSelect.disabled = false;
                 }
             });
+
             nameSelect.addEventListener('change', () => {
                 const selectedName = nameSelect.value;
                 roleDisplay.value = '';
@@ -427,7 +471,35 @@
                     }
                 }
             });
-        });
+        }
+
+        // --- 팝업 연락망 채우는 함수 (기존 로직 분리) ---
+        function populateContactList() {
+            const contactList = document.querySelector('.contact-list ul');
+            contactList.innerHTML = ''; // 로딩 메시지 제거 및 리셋
+
+            if (rosterData.length === 0) {
+                contactList.innerHTML = '<li>등록된 연락처가 없습니다.</li>';
+                return;
+            }
+
+            rosterData.forEach(person => {
+                // 데이터가 비어있는 경우 표시하지 않음
+                if (!person.name || !person.department || !person.role) return;
+
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <div>
+                        <span class="contact-name">${person.name}</span>
+                        <br>
+                        <span class="contact-role">${person.department} - ${person.role}</span>
+                    </div>
+                    <!-- 연락처가 있을 때만 전화 버튼 표시 -->
+                    ${person.phone ? `<a href="tel:${person.phone}" class="contact-phone">📞 전화</a>` : ''}
+                `;
+                contactList.appendChild(listItem);
+            });
+        }
     </script>
 </body>
 </html>
